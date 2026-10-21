@@ -1,0 +1,63 @@
+import React,{useEffect,useRef,useState} from 'react';
+import {AnimatePresence,motion} from 'motion/react';
+import {Play,Pause,ChevronRight,ChevronLeft,Volume2,VolumeX,Move3d,FlaskConical,BookOpen,ExternalLink,Info,Subtitles,ArrowUpRight,SkipForward,RotateCcw,X,Video,Clapperboard} from 'lucide-react';
+import {Intro} from './Intro';
+import {VehicleScene} from './Vehicle';
+import {ExploreLab,ExperimentLab} from './Lab';
+import {chapters} from './data';
+import {evidence,officialHistoric,recentDemonstration,eventReplayURL,eventSegments} from './research';
+import {narrateChapter,narrateIntro,stopNarration} from './audio';
+type Overlay='explore'|'experiment'|'proof'|null;
+const videoHref='https://www.tesla.com/roadster';
+const ival=(n:number)=>String(n+1).padStart(2,'0');
+export default function Film(){
+ const [intro,setIntro]=useState(true),[chapter,setChapter]=useState(0),[playing,setPlaying]=useState(false),[muted,setMuted]=useState(false),[captions,setCaptions]=useState(true),[dossier,setDossier]=useState(false),[overlay,setOverlay]=useState<Overlay>(null),[ready,setReady]=useState(false),[finished,setFinished]=useState(false),[auto,setAuto]=useState(true);
+ const chapterRef=useRef(0),transitionRef=useRef(false),autoRef=useRef(true),mutedRef=useRef(false),overlayRef=useRef<Overlay>(null),touchY=useRef(0),timer=useRef<number|undefined>(undefined);
+ const current=chapters[chapter];
+ useEffect(()=>{autoRef.current=auto},[auto]);
+ useEffect(()=>{overlayRef.current=overlay;if(overlay){stopNarration();setPlaying(false);setReady(true)}},[overlay]);
+ useEffect(()=>{mutedRef.current=muted;if(muted){stopNarration();setPlaying(false);setReady(true)}},[muted]);
+ useEffect(()=>()=>{stopNarration();window.clearTimeout(timer.current)},[]);
+ const onNarrationEnd=(i:number)=>{if(chapterRef.current!==i||overlayRef.current)return;setReady(true);setPlaying(false);if(autoRef.current){timer.current=window.setTimeout(()=>move(1,true),1050)}};
+ function narrate(i:number){window.clearTimeout(timer.current);if(mutedRef.current){setReady(true);setPlaying(false);return}setPlaying(true);setReady(false);narrateChapter(i,()=>onNarrationEnd(i))}
+ function move(step:number,automatic=false){const value=chapterRef.current;if(transitionRef.current||overlayRef.current)return;if(automatic&&!autoRef.current)return;const next=value+step;if(next>chapters.length-1){setFinished(true);stopNarration();return}if(next<0)return;transitionRef.current=true;window.clearTimeout(timer.current);stopNarration();setPlaying(false);setDossier(false);setReady(false);timer.current=window.setTimeout(()=>{chapterRef.current=next;setChapter(next);transitionRef.current=false;narrate(next)},850)}
+ function begin(){setIntro(false);setReady(false);setMuted(false);mutedRef.current=false;setPlaying(true);narrateIntro(()=>narrate(0))}
+ useEffect(()=>{if(intro)return;const key=(e:KeyboardEvent)=>{if(overlayRef.current)return;if(['ArrowRight','PageDown'].includes(e.key)){e.preventDefault();move(1)}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();move(-1)}else if(e.key===' '){e.preventDefault();if(playing){stopNarration();setPlaying(false);setReady(true)}else narrate(chapterRef.current)}else if(e.key==='Escape'){setDossier(false);setOverlay(null)}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[intro,playing]);
+ // Each wheel gesture advances a discrete film chapter; the previous chapter completes its exit first.
+ useEffect(()=>{if(intro)return;let acc=0;const wheel=(e:WheelEvent)=>{if(overlayRef.current)return;e.preventDefault();acc+=e.deltaY;if(Math.abs(acc)>170){if(acc>0){if(ready)move(1);else if(!playing)move(1)}else move(-1);acc=0}};const options:{passive:boolean}={passive:false};window.addEventListener('wheel',wheel,options);return()=>window.removeEventListener('wheel',wheel)},[intro,ready,playing]);
+ const pointerDown=(e:React.TouchEvent)=>{touchY.current=e.changedTouches[0]?.clientY??0};
+ const pointerUp=(e:React.TouchEvent)=>{if(overlay)return;const d=touchY.current-(e.changedTouches[0]?.clientY??0);if(Math.abs(d)>80){if(d>0){if(ready||!playing)move(1)}else move(-1)}};
+ const togglePlayback=()=>{if(playing){stopNarration();setPlaying(false);setReady(true);window.clearTimeout(timer.current)}else{setMuted(false);mutedRef.current=false;narrate(chapterRef.current)}};
+ const toggleMute=()=>{setMuted(x=>!x)};
+ const closeOverlay=()=>{setOverlay(null);overlayRef.current=null;setReady(true)};
+ const stage=chapter===0?recentDemonstration:chapter===1?officialHistoric:chapter===2?[{value:'4 × 20',label:'FAN POWER · kW (REPORTED)'},{value:'ΔP × A',label:'FORCE MODEL'}]:chapter===3?[{value:'N₂',label:'COMPRESSED NITROGEN'},{value:'FINITE',label:'GAS ENDURANCE'}]:[{value:current.stat,label:current.statLabel}];
+ return <>{intro?<Intro onEnter={begin}/>:<div className="film-root" onTouchStart={pointerDown} onTouchEnd={pointerUp}>
+  <div className="scene-fixed"><VehicleScene chapter={chapter} exploded={[1,2,3,5].includes(chapter)} focus={chapter===2?'fans':chapter===3?'thrusters':chapter===5?'computer':'body'}/></div><div className="film-overlay-dark"/>
+  <div className="film-chapter-label">BG<span>BEYOND GRAVITY / INTERACTIVE DOCUMENTARY</span></div>
+  <div className="film-progress-segments" aria-label="Film chapters">{chapters.map((c,i)=><button key={c.id} className={i<chapter?'complete':i===chapter?'active':''} onClick={()=>{if(i===chapter)return;transitionRef.current=false;chapterRef.current=i;setChapter(i);setReady(false);stopNarration();narrate(i)}} title={c.title} aria-label={'Go to chapter '+(i+1)}/>)}</div>
+  <div className="film-top-actions"><button className="film-glass-button" onClick={()=>setDossier(v=>!v)}><BookOpen size={16}/><span>FIELD NOTES</span></button><button className="film-glass-button" onClick={()=>setCaptions(v=>!v)} aria-label={captions?'Hide captions':'Show captions'}><Subtitles size={17}/></button><button className="film-glass-button" onClick={toggleMute} aria-label={muted?'Enable narration':'Mute narration'}>{muted?<VolumeX size={17}/>:<Volume2 size={17}/>}</button></div>
+  <AnimatePresence mode="wait" initial={false}><motion.section className="film-stage" key={chapter} initial={{opacity:0,scale:1.025}} animate={{opacity:1,scale:1}} exit={{opacity:0,scale:.985}} transition={{duration:.82,ease:[.2,.75,.2,1]}}><div className="film-reveal-curtain"/><div className="film-reveal-line"/><div className="film-stage-content">
+    <motion.div className="film-num" initial={{y:26,opacity:0}} animate={{y:0,opacity:1}} transition={{duration:.6,delay:.25}}>{current.kicker} <span style={{color:'#8cb5bf'}}> / {ival(chapter)}—12</span></motion.div>
+    <div className="filmtag">{current.tag} <span style={{padding:'0 10px'}}>·</span> RESEARCH LED / VISUAL INTERPRETATION</div>
+    <motion.h1 initial={{y:95,opacity:0,filter:'blur(10px)'}} animate={{y:0,opacity:1,filter:'blur(0px)'}} transition={{duration:1,delay:.15,ease:[.15,.8,.2,1]}}>{current.title}</motion.h1>
+    <motion.h2 initial={{y:32,opacity:0}} animate={{y:0,opacity:1}} transition={{duration:.8,delay:.4}}>{current.subtitle}</motion.h2>
+    <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{duration:1,delay:.6}}>{current.description}</motion.p>
+    <motion.div className="film-facts" initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:.7,duration:.5}}>{stage.map((s,i)=><button type="button" onClick={()=>setDossier(true)} className="film-fact" key={s.value+i}><strong>{s.value}</strong><span>{s.label}</span></button>)}</motion.div>
+    <div className="film-embed-card">
+      {chapter===0&&<a className="film-evidence" href={eventReplayURL} target="_blank" rel="noreferrer"><Video size={15} style={{verticalAlign:'middle',marginRight:9}}/> WATCH 2026 FLIGHT DEMONSTRATION ↗</a>}
+      {chapter===1&&<button className="film-glass-button" onClick={()=>setOverlay('proof')}><Clapperboard size={16}/> WATCH TESLA'S ARCHIVAL ROADSTER UNVEIL</button>}
+      {chapter>1&&<button className="film-glass-button" onClick={()=>setOverlay(chapter===10?'experiment':'explore')}>{chapter===10?<FlaskConical size={17}/>:<Move3d size={17}/>} {chapter===10?'OPEN SIMULATOR':'INSPECT THE 3D MECHANISM'}</button>}
+    </div>
+  </div><div className="filmstat">{current.stat}<small>{current.statLabel}</small></div></motion.section></AnimatePresence>
+  <div className="film-scroll-hint">SCROLL TO ADVANCE <ChevronRight size={15}/></div>
+  {captions&&playing&&<div className="film-script" aria-live="polite"><div className="film-script-label">NARRATOR / DOCUMENTARY</div>{current.narration.slice(0,215)}{current.narration.length>215?'…':''}</div>}
+  <button className="film-glass-button film-info-toggle" onClick={()=>setDossier(x=>!x)} aria-label="Toggle chapter evidence"><Info size={16}/> {dossier?'CLOSE NOTES':'THE EVIDENCE'}</button>
+  <AnimatePresence>{dossier&&<motion.aside className="film-dossier" initial={{x:36,opacity:0}} animate={{x:0,opacity:1}} exit={{x:36,opacity:0}} transition={{duration:.3}}><div className="filmtag">SOURCEBOOK / {ival(chapter)}</div><h3>{evidence[chapter].heading}</h3><ul>{evidence[chapter].bullets.map(b=><li key={b}>{b}</li>)}</ul><div className="filmtag" style={{marginTop:20}}>VERIFY THE SOURCES</div>{evidence[chapter].sources.map(s=><a key={s.url} target="_blank" rel="noreferrer" href={s.url}>{s.name}<ArrowUpRight size={14}/></a>)}<div className="film-links"><button onClick={()=>setDossier(false)}>CLOSE SOURCEBOOK</button></div></motion.aside>}</AnimatePresence>
+  <div className="film-bottom"><div className="film-counter">CHAPTER {ival(chapter)} / {chapters.length} <span style={{display:'block',marginTop:5,color:'#8eb9bc'}}> {ready?'READY TO CONTINUE':playing?'DOCUMENTARY IN PROGRESS':'PAUSED'}</span></div><div className="film-transport"><button className="film-glass-button" onClick={()=>move(-1)} aria-label="Previous chapter"><ChevronLeft size={20}/></button><button className="transport-main" onClick={togglePlayback} aria-label={playing?'Pause narration':'Resume narration'}>{playing?<Pause size={19} fill="currentColor"/>:<Play size={19} fill="currentColor"/>}</button><button className="film-glass-button" onClick={()=>move(1)} aria-label="Next chapter"><ChevronRight size={20}/></button><button className="film-glass-button" onClick={()=>setAuto(x=>!x)} title={auto?'Disable automatic chapter progression':'Enable automatic chapter progression'}>{auto?'AUTO ON':'AUTO OFF'}</button></div><div className="film-activity"><b/>{playing?'AUDIO RUNNING':ready?'READY FOR NEXT CHAPTER':'DOCUMENTARY'}</div><div className="film-track"><span style={{width:(chapter/chapters.length*100)+'%'}}/></div></div>
+  <div className="film-small-legal">INDEPENDENT EDUCATIONAL WORK · NOT AFFILIATED WITH TESLA, SPACEX OR NETFLIX</div>
+  {overlay==='explore'&&<ExploreLab audioOn={!muted} onClose={closeOverlay}/>}
+  {overlay==='experiment'&&<ExperimentLab onClose={closeOverlay}/>}
+  {overlay==='proof'&&<div className="film-video-proof" role="dialog" aria-modal="true" aria-label="Archival Tesla unveiling footage"><div className="proof-inner"><div className="proof-top"><strong>OFFICIAL TESLA ROADSTER UNVEIL / ARCHIVE FROM 2017</strong><button className="film-glass-button" onClick={closeOverlay}><X size={20}/> CLOSE</button></div><iframe title="Tesla Roadster 2017 official unveiling video" src="https://player.vimeo.com/video/249563752?dnt=1" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen/><p style={{fontSize:11,color:'#a9bbc5',lineHeight:1.5}}>Video embedded from the Vimeo player featured on Tesla's Roadster website. It predates the October 2026 flight demonstration.</p></div></div>}
+  {finished&&<div className="film-end-overlay"><div className="filmtag">THIS IS NOT THE END OF THE STORY</div><h2>BEYOND<br/>GRAVITY.</h2><p>The Roadster's stunt showed what's possible for a moment. The future asks how to make flight safe, practical, and repeatable.</p><div className="film-links"><button onClick={()=>{setFinished(false);chapterRef.current=0;setChapter(0);narrate(0)}}><RotateCcw size={16}/> REPLAY THE DOCUMENTARY</button><button onClick={()=>{setFinished(false);setOverlay('experiment')}}>ENTER THE FUTURE LAB ↗</button><a href="https://github.com/RAJ-SUHANDANI/Beyond_Gravity" target="_blank" rel="noreferrer" style={{border:'1px solid #a9e1d355',padding:'13px',fontSize:11}}>VIEW THE SOURCE ↗</a></div></div>}
+ </div>}</>
+}

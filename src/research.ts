@@ -1,0 +1,35 @@
+/** Curated documentary footnotes. Official specs from Tesla's older page are distinguished from Oct 2026 reporting. */
+export type Evidence={heading:string,bullets:string[],sources:{name:string,url:string}[]};
+const tesla={name:'Tesla Roadster / historic product page',url:'https://www.tesla.com/roadster'};
+const event={name:'2026 Roadster reveal / Reuters',url:'https://www.reuters.com/business/autos-transportation/tesla-set-unveil-next-generation-roadster-sports-ev-after-years-delay-2026-10-15/'};
+const wired={name:'Engineering discussion / WIRED',url:'https://www.wired.com/story/how-tesla-made-its-new-230-mph-car-fly'};
+const AP={name:'Event and roadworthiness / AP',url:'https://apnews.com/article/7d5f19665435b7408025bfb7a2f2f0b7'};
+const NASA={name:'NASA X-57 Electric Aircraft',url:'https://www.nasa.gov/x-57-maxwell/'};
+const FAA={name:'FAA Advanced Air Mobility',url:'https://www.faa.gov/air-taxis'};
+const reveal={name:'Roadster 2026 — event replay and transcript',url:'https://elonmuskarchive.org/video/tesla-roadster-event-2026-10-16'};
+export const officialHistoric=[
+ {value:'1.9 SEC',label:'0–60 MPH · ORIGINAL ROADSTER PAGE'},
+ {value:'250+ MPH',label:'TOP SPEED · ORIGINAL ROADSTER PAGE'},
+ {value:'620 MI',label:'RANGE · ORIGINAL ROADSTER PAGE'}
+];
+export const recentDemonstration=[
+ {value:'0.81 SEC',label:'0–60 MPH · 2026 DEMO CLAIM'},
+ {value:'4 × 20kW',label:'FAN MOTORS · REPORTED'},
+ {value:'2028',label:'PRODUCTION TARGET · NOT GUARANTEED'}
+];
+export const evidence:Evidence[]=[
+ {heading:'What the camera actually showed',bullets:['Tesla demonstrated an unoccupied Roadster prototype on 15 October 2026 at the SpaceX facility in McGregor, Texas.','The vehicle performed a ramp and upside-down manoeuvre, an airborne rotation, a landing, and a separate acceleration demonstration.','The published stunt is not evidence of practical sustained city-to-city flight.','Tesla’s older product page continues to display earlier 1.9-second, 250+ mph and 620-mile claims; those are not confirmed 2026 Rocket variant specifications.'],sources:[event,AP,reveal,tesla]},
+ {heading:'The design is not a factory blueprint',bullets:['The 2017 product page describes a four-seat supercar with a removable glass roof and a focus on aerodynamic efficiency.','The redesigned 2026 prototype has different packaging and reported equipment; old promotional imagery must not be treated as exact 2026 specifications.','Our original procedural car is an interpretive teaching object, never claimed as Tesla CAD.'],sources:[tesla,event,wired]},
+ {heading:'The fan-powered suction system',bullets:['WIRED reports four approximately 20 kW fans and independently deployable underbody skirts.','Fans reduce underbody pressure and skirts limit inflow, allowing atmospheric pressure to create traction even at low speed.','Suction acts relative to a nearby surface: it does not generate free-flight lift.','Pressure × sealed area is a useful introductory force estimate, not a complete aerodynamic model.'],sources:[wired,reveal]},
+ {heading:'Compressed gas, not unlimited rocket flight',bullets:['2026 reporting describes SpaceX-inspired high-pressure cold-gas thrusters and carbon-composite pressure storage.','Cold gas expelled through nozzles transfers momentum, generating force in the opposite direction.','Nozzle placement determines moments around the centre of mass: pitch, roll and yaw.','Stored gas is limited; reports describe long refill periods for the test system.'],sources:[wired,AP]},
+ {heading:'The crucial equations',bullets:['For a mass m, weight is approximately m × 9.81 newtons near Earth’s surface.','To hover, upward force must balance weight; accelerating or manoeuvring requires more control authority.','Torque depends on both applied force and the perpendicular distance from the centre of mass.','The interactive power model uses ideal actuator-disk momentum theory, not the Tesla cold-gas prototype’s actual performance.'],sources:[NASA,wired]},
+ {heading:'The control problem',bullets:['Accelerometers and gyroscopes estimate angular velocity and acceleration; control software uses feedback to calculate corrections.','A flying vehicle must reject gusts and failures while maintaining controllable attitude.','Actual Tesla flight-control code, sensor layout and tuning are not publicly documented.'],sources:[FAA,NASA]},
+ {heading:'Development demands evidence',bullets:['Define missions, loading, power budgets, flight envelopes and safety requirements before fabrication.','Use simulations and independent subsystem verification, then carefully controlled unoccupied tests.','A cinematic demo is not certification or validation of commercial reliability.'],sources:[FAA,NASA,AP]},
+ {heading:'Why everyday flight remains hard',bullets:['Energy storage and structural weight constrain all electric flight architectures.','Noise, downwash, rotor/jet exposure, emergency landing and airspace integration pose substantial risks.','The 2026 thruster-equipped Roadster is not broadly street-legal according to reporting.','Tesla targeted 2028 production, but that is not a guaranteed delivery date.'],sources:[AP,event,FAA]},
+ {heading:'Flying car is not one design category',bullets:['Thruster-assisted sports cars achieve short bursts but face gas-storage limits.','Multicopter roadable eVTOL can take off vertically yet must support both road and air requirements.','Winged roadable airplanes are more efficient in cruise but usually require a runway.','Modular car-and-aircraft systems trade convenience for separation of road and flight engineering.'],sources:[NASA,FAA]},
+ {heading:'Future possibilities are not Tesla promises',bullets:['Greater aerodynamic efficiency, lighter structures and stronger battery systems may improve real-world utility.','More redundancy and sensing can improve resilience, subject to testing and certification.','Every improvement involves compromises with mass, complexity and cost.'],sources:[NASA,FAA]},
+ {heading:'The calculation is useful, not certification-grade',bullets:['Ideal hover power is proportional to thrust raised to the 1.5 power.','Higher rotor area reduces ideal induced power for the same mass.','Electrical energy estimate depends on assumed overall efficiency.','Real rotor design, vehicle geometry, altitude, battery reserves and control overhead are excluded.'],sources:[NASA]},
+ {heading:'What the demonstration should inspire',bullets:['The Roadster event is a striking demonstration of integrated mechanical and propulsion control.','Practical flight requires repeated safety validation, operational infrastructure and regulator approval.','This independent documentary is for education and does not represent Tesla or SpaceX.'],sources:[AP,event,FAA]}
+];
+export const eventReplayURL='https://elonmuskarchive.org/video/tesla-roadster-event-2026-10-16';
+export const eventSegments=[{time:'06:03',title:'The ramp demonstration'},{time:'10:56',title:'The mid-air rotation'},{time:'12:47',title:'Design reveal'},{time:'14:38',title:'Suction and aerodynamics'},{time:'15:58',title:'The acceleration demonstration'}];

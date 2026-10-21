@@ -1,68 +1,70 @@
 # BEYOND GRAVITY
-### An interactive documentary about the car that challenged gravity — and the physics of what comes next.
+#### THE STUNT. THE SCIENCE. THE FUTURE.
 
-**A cinematic, chapter-based exploration of Tesla's 2026 Roadster demonstration, flight physics, vehicle mechanisms, and the future of roadable aircraft.** Built entirely as a free, local-first, front-end experience with original procedural 3D, scientific interactives, and complementary documentary narrators.
+**An independent, cinematic, interactive documentary about the Tesla Roadster demonstrations and the extraordinary engineering required to move beyond the road.**
 
-> **Start the film. Step inside the machine. Question the future.**
+> A car enters the frame. The world goes dark. Light slices across the bodywork. The invitation appears: **ENTER EXPERIENCE**. What follows is not an ordinary site — it's a chapter-gated film with an original interactive 3D vehicle, playable physics experiments, documentary narration and a fully cited technical sourcebook.
+
+[![Build & Typecheck](https://github.com/RAJ-SUHANDANI/Beyond_Gravity/actions/workflows/build.yml/badge.svg)](https://github.com/RAJ-SUHANDANI/Beyond_Gravity/actions/workflows/build.yml)
+[![Free](https://img.shields.io/badge/runtime-no_paid_APIs-91e1d4)](https://github.com/RAJ-SUHANDANI/Beyond_Gravity)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-procedural_3D-black?logo=threedotjs)](https://threejs.org/)
 
 ---
 
-## The experience
+## What makes it different?
 
-This is not a conventional product landing page. Beyond Gravity is a **playable science documentary**. A persistent WebGL world moves through twelve chapters as the viewer scrolls; the car transforms from a silhouette into a labeled engineering cutaway. At any moment, viewers can enter a dedicated component lab or run a physics experiment.
+### 01 — Cinematic entry, not a website landing page
+The experience starts behind a near-black screen. A historical *publisher-hosted official Roadster unveil video* emerges through aperture masks, a lighting sweep, letterboxing and a hand-art-directed montage effect. Pointer movement adds subtle video-layer depth. A metallic, dimensional **Enter Experience** button completes the opening. It is **video**, not the site's 3D model.
 
-| Experience | What you do |
-| --- | --- |
-| **WATCH / Documentary** | Follow twelve cinematic chapters, optional voice narration, animated cameras, editorial captions, sources, and a film-style progress rail. |
-| **EXPLORE / Component laboratory** | Orbit and zoom a fully original, code-generated sports-car concept. Focus on wheels, suction fans, nitrogen vessel, thruster nozzles, and controls. Each part triggers a short female-guide explanation. |
-| **EXPERIMENT / Flight laboratory** | Change aircraft mass, rotor disk area, and efficiency; calculate the corresponding ideal and estimated hover-power requirement live. Compare principles without confusing a simulation with flight certification. |
+**Media honesty:** Tesla's official Roadster webpage features a 2017 Vimeo unveil. This intro is that archival video, **not** footage of the separate 2026 flight demonstrations. The 2026 event replay is linked within the documentary with segment references. We neither redistribute Tesla film files nor pretend to own them.
 
-### The chapters
-01. **The Impossible Moment** — the actual demonstration and its limits.
-02. **Anatomy of the Machine** — a visual tour of a conceptual mechanical layout.
-03. **The Suction Secret** — fans, skirts, and pressure difference.
-04. **Force, On Demand** — nitrogen, nozzles, and Newton's third law.
-05. **The Mathematics of Flight** — weight, lift, thrust, and torque.
-06. **The Digital Pilot** — sensors and control loops.
-07. **Engineering the Impossible** — modelling, manufacturing, and staged testing.
-08. **The Reality Check** — weight, energy, redundancy, infrastructure, and safety.
-09. **Four Roads to the Sky** — thruster-assisted, multicopter, winged, modular.
-10. **The Next Generation** — high-impact research directions and trade-offs.
-11. **The Future Lab** — interactive hover-power model and design tradeoffs.
-12. **Beyond Gravity** — the future of mobility, deliberately left open.
+### 02 — A film that unlocks chapter by chapter
+A single animated stage replaces ordinary stacked content blocks. Each chapter is introduced by editorial typography, a kinetic reveal wipe, a live-moving 3D scene, ambient cinematic treatment and narrated explanation. **The first experience begins after Enter is clicked** (browsers commonly block audible autoplay without interaction). Subsequent narration can automatically advance the story when it concludes. Manual chapter seeking remains possible.
 
-## Art direction
+### 03 — The car becomes an educational instrument
+A hand-authored, procedural Three.js sports-car interpretation with a lofted sculptural exterior, streamlined canopy, racing wheels, headlights, aerodynamic detailing, separately animated fans, cold-gas nozzles, vessel and flight-control electronics. The geometry uses original code inspired by Roadster exterior references and the technique advocated by [img2threejs](https://github.com/img2threejs/img2threejs). No marketplace meshes are downloaded.
 
-Dramatic graphite interiors, physically motivated highlights, minimal editorial typography, carefully paced transitions, and a believable procedural car. This project intentionally avoids downloaded car meshes, generic templates, gratuitous glowing gradients, stock-video wallpaper, and ungrounded techno-babble. Motion exists to **teach a concept**.
+**This model is not Tesla CAD, a precision photogrammetric scan or an exact reproduction of the October 2026 prototype.** Unknown internals are labelled conceptual.
 
-The source of the car is **hand-authored procedural Three.js geometry**: named, independently animated groups for the body, canopy, wheels, fans, thrusters, and cylinder. The approach takes inspiration from [img2threejs](https://github.com/img2threejs/img2threejs), an Apache-2.0 code-first reconstruction workflow. It is *not* a Tesla CAD dump or an exact reverse-engineered replica. No proprietary 3D models, paid asset packs, or copied press footage are bundled.
+### 04 — Watch / Explore / Experiment
+- **Watch**: full-screen film chapters, animated transitions, evidence and optional subtitle panels.
+- **Explore**: orbit/zoom the 3D car, explode it, click or select components, and see the relevant mechanism enlarged with a concise female-guide explanation.
+- **Experiment**: interact with a hover-power model that updates as mass, rotor disk area and efficiency change. This is physics education, not flight certification.
 
-## Audio: two documentary voices
+### 05 — Two natural-language documentary hosts
+- **Male**: deeper and more involved explanations across twelve chapters.
+- **Female**: short introductions, component explanations and interactive guidance.
+- Sound starts after the visitor's **Enter Experience** interaction, not after tapping a "hear story" button in every chapter.
+- The application prefers **pre-rendered local natural TTS audio** named `public/audio/male-00.mp3` through `male-11.mp3`, and `female-*.mp3`. It falls back to a browser-supplied voice if clips are absent; that system voice is **not guaranteed natural-sounding**.
+- To produce professional open-source recordings without paid cloud APIs: see [tools/render_narration.py](tools/render_narration.py) and [public/audio/README.md](public/audio/README.md). Use two voice reference samples you own/have permission to use. Run [Chatterbox](https://github.com/resemble-ai/chatterbox) locally and quality-check every clip.
 
-- **Male documentary narrator:** long, important, dramatic scientific explanations.
-- **Female field guide:** short introductions, transitions, and contextual explanations when a component is clicked and enlarged.
-- **Sound is opt-in.** Playback can be disabled. The site falls back to browser speech synthesis with separate voice preferences. Available voices and how natural they sound vary by OS/browser.
-- For consistently cinematic natural voices, render **local audio files** from the open-source [Chatterbox](https://github.com/resemble-ai/chatterbox) or [Kokoro](https://github.com/hexgrad/kokoro) TTS engines (respect their model/voice licensing) and put them in `public/audio/` using the filename convention in `public/audio/README.md`. The player tries those recordings first and otherwise uses local/browser speech when available.
-- No paid narration service, API key, login, server or user database is required.
+**Current limitation:** The repository provides the local TTS production pipeline, not bundled paid studio recordings. Generating and committing final natural neural speech files requires an authorized voice sample, local model weights, and a capable production machine. The website remains free to run.
 
-**Transparency:** This repository does not pretend to ship licensed voice-actor performances or pre-rendered neural TTS audio it hasn't produced. Browser voice quality is platform-dependent; local neural audio is an optional enhancement.
+---
 
-## Tech stack
+## Twelve chapters
 
-- **React 19 + TypeScript + Vite** — front-end application.
-- **Three.js + React Three Fiber + Drei** — procedural vehicle, light and camera rigs, WebGL interactions.
-- **GSAP + ScrollTrigger + Lenis** — documentary scroll choreography and chapter synchronization.
-- **Motion** — editorial interface animations.
-- **Anime.js** — instrumentation and animated explanatory diagrams.
-- **@react-spring/three** — physically springing parts in the component laboratory.
-- **Lucide React** — accessible control icons.
-- **CSS** — hand-authored responsive visual system, gradients used sparingly.
-- **Web Speech API** — free built-in, offline-when-supported narration fallback.
-- No back end. No payments. No runtime cloud AI dependency. No required hosting.
+| # | Episode | Subject |
+|---|---|---|
+| 01 | **The Impossible Moment** | What Tesla demonstrated in October 2026, plus the limitations of brief airborne stunts. |
+| 02 | **Anatomy of an Idea** | Inspect an original Roadster-inspired conceptual mechanical model. |
+| 03 | **The Suction Secret** | Four reported fan motors, skirts, pressure differences and traction. |
+| 04 | **Force on Demand** | Gas storage, cold-gas thrust, reaction forces, attitude control. |
+| 05 | **Gravity Never Negotiates** | Mass, lift, thrust and torque. |
+| 06 | **The Digital Pilot** | Feedback loops, sensor systems and stability. |
+| 07 | **Built to be Tested** | Research, safety requirements, verification and iteration. |
+| 08 | **The Hard Limits** | Range, energy, noise, safety and airworthiness. |
+| 09 | **Four Roads to the Sky** | Roadable eVTOL, winged cars, modular systems, thruster variants. |
+| 10 | **What Comes Next?** | Technical directions and genuine engineering trade-offs. |
+| 11 | **Make Physics Visible** | Interactive rotor hover-power experiment. |
+| 12 | **Beyond Gravity** | Film epilogue, research links and scientific perspective. |
 
-## Run locally
+---
 
-Requires **Node.js 20.19+ or 22.12+**, npm, and a modern WebGL-capable browser.
+## Install and run — completely free
+
+Requires Node.js **20.19+** or **22.12+**, npm and a modern WebGL browser.
 
 ```bash
 git clone https://github.com/RAJ-SUHANDANI/Beyond_Gravity.git
@@ -71,80 +73,97 @@ npm install
 npm run dev
 ```
 
-Open the local address printed by Vite, usually `http://localhost:5173`.
+Open the local Vite address (usually `http://localhost:5173`).
 
 ```bash
-npm run build        # static production build -> dist/
-npm run preview      # preview the built experience
-npm run typecheck    # TypeScript validation
+npm run typecheck
+npm run build
+npm run preview
 ```
 
-The static build can be served from any static file server later, but **deployment is entirely optional**.
+There are **no runtime accounts, paid APIs, database, payment system or required hosting service**. The Vimeo intro is an external optional official embed, so that particular video needs internet access. No third-party media is copied into the repository.
 
-## Interface and accessibility
+### Optional: locally render professional narration
 
-- Documentary progress is driven by the visible chapter.
-- **Explore** opens the component examination stage; change focus, orbit, zoom or close it.
-- **Experiment** opens an actual parameterized power calculation using actuator-disk momentum theory, not a fabricated numerical "AI prediction".
-- Motion and narration controls are explicit, keyboard accessible, with legible labels.
-- `prefers-reduced-motion` reduces decorative transitions.
-- Mobile layouts simplify graphics and controls; GPU-heavy effects are intentionally limited.
-- Audio is never forced at page load.
-- An HTML summary and research links remain useful when WebGL is not available.
-
-## Equations and simulation accuracy
-
-For an aircraft with mass `m`, gravity `g`, air density `rho` and combined effective rotor disk area `A`:
-
-```
-Weight / hover thrust T = m × g
-Ideal hover power P = T^(3/2) / sqrt(2 × rho × A)
-Electrical-power estimate = P / assumed overall efficiency
+```bash
+python -m pip install chatterbox-tts torchaudio
+python tools/render_narration.py --male-ref voices/my_authorized_male.wav --female-ref voices/my_authorized_female.wav
 ```
 
-This educational model omits dynamic inflow, interactions between rotors and airframe, climb, forward flight, reserves, battery degradation, control authority and countless certification constraints. It is **not** a build plan or flight-certified tool.
-
-### Evidence and sourcing standards
-
-A 2026 Roadster demonstration included short-duration airborne manoeuvres with cold-gas thrusters. **This did not establish normal sustained flight, commercial production, or legal road/air use.** Our models of unpublicized internal geometry, component placement, tank sections and control details are clearly marked *conceptual*.
-
-Recommended primary/industry reporting:
-- [Associated Press — Roadster demonstration and its limitations](https://apnews.com/article/7d5f19665435b7408025bfb7a2f2f0b7)
-- [WIRED — Engineering of Tesla's new Roadster](https://www.wired.com/story/how-tesla-made-its-new-230-mph-car-fly)
-- [The Verge — Next-generation Roadster reveal](https://www.theverge.com/transportation/1012552/tesla-roadster-next-gen-reveal-elon-musk)
-- [NASA — X-57 electric flight research](https://www.nasa.gov/x-57-maxwell/)
-- [FAA — Advanced Air Mobility](https://www.faa.gov/air-taxis)
-- [img2threejs procedural 3D skill](https://github.com/img2threejs/img2threejs)
-
-This educational independent project is **not affiliated with or endorsed by Tesla, SpaceX, Netflix, NASA or any company referenced.** No Tesla trademarks, corporate branding, or third-party video clips are packaged into the site.
-
-## Architecture
-
-```text
-src/
-  main.tsx           # entry and runtime
-  App.tsx            # experience director + chapter UI
-  Vehicle.tsx        # custom procedural 3D geometry and cameras
-  Lab.tsx            # component explorer + power experiment
-  data.ts            # documentary writing + evidence links
-  audio.ts           # male/female narration director
-  physics.ts         # educational power model
-  styles.css         # design system and responsive cinematic layout
-public/
-  favicon.svg
-  audio/README.md    # optional offline neural-narration asset instructions
-```
-
-The current experience is deliberately static: no personal information collected, no external analytics, no account, no server.
-
-## Content and asset contributions
-
-When contributing a real photograph, recording, or 3D reference, include its URL, author, license, and whether commercial redistribution is permitted. A single exterior photo is not sufficient evidence for hidden engineering geometry. Label estimated and illustrative engineering features explicitly. New interactive simulations must document assumptions and units.
-
-## Free means actually free
-
-All runtime functionality works with local source and standard open-source dependencies. The optional img2threejs agent workflow and optional neural TTS generation are **production tools, not runtime services**; neither paid generation nor subscription software is necessary for running the site.
+Requires an installed FFmpeg, model weights and sufficient compute. These commands generate independent voice files from two **properly licensed** samples and save them in `public/audio/`. Listen to every result, revise pronunciation and pauses, and only then commit audio assets you are permitted to distribute.
 
 ---
 
-**Created as an independent educational experiment. The future is not something to pretend we already know — it is something to investigate.**
+## Creative and technical stack
+
+| System | Tools |
+|---|---|
+| Application | React 19, TypeScript, Vite |
+| Original WebGL car + physical teaching scenes | Three.js, React Three Fiber, Drei utilities |
+| Documentary transitions | Motion |
+| Animation experiments | CSS 3D, GSAP, Anime.js, React Spring |
+| Realistic local TTS production | Chatterbox; FFmpeg |
+| Offline-safe calculations | Built-in TypeScript physics formulas |
+| Sourcebook | Audited public references and independent explanations |
+
+A **responsive, mobile-aware** interface includes pointer/touch/keyboard controls, reduced motion styles, evidence source panels, and opt-in narrated playback. Scene complexity is capped for performance.
+
+### Important interactions
+- Landing **Enter Experience** -> begin documentary + audio in response to the user gesture.
+- Wait for narration and auto progression, or manually step forwards/backwards.
+- Click **Field Notes / Evidence** to inspect documented claims and source URLs.
+- Select **Inspect** to manipulate a custom component scene.
+- Change mass, rotor area and efficiency in the **Future Lab**.
+- Toggle captions, mute or enable auto-advance.
+- Follow the 2026 reveal link to review the genuine demo context.
+
+---
+
+## Factual integrity and Tesla's rights
+
+Read [SOURCES.md](SOURCES.md) before distributing this educational project.
+
+- Tesla's own Roadster webpage displays **older promotional figures** such as 1.9 s acceleration and 620 mi range. Do not confuse these with the **2026** prototype demonstration.
+- Reuters, WIRED and AP reported on the October 2026 stunt and its SpaceX-influenced gas thrusters, fans and production targets. See [sources](SOURCES.md).
+- Brief airborne action **is not** independent proof of sustained commercially certified flight.
+- Internal parts and new scenarios in our 3D model are explicitly **conceptual educational reconstruction**.
+- The video is publisher-embedded, not copied, remixed or shipped as ours.
+- Tesla's copyrights/trademarks remain Tesla's. **Attribution and an independence disclaimer do not grant permission** or guarantee against a takedown or legal notice. Obtain appropriate rights before mirroring or creating derivative Tesla media for public distribution.
+
+**Not affiliated with, sponsored by, or endorsed by Tesla, SpaceX, Netflix or any other company mentioned.**
+
+### Research anchors
+[Tesla Roadster](https://www.tesla.com/roadster) · [Reuters Roadster reveal](https://www.reuters.com/business/autos-transportation/tesla-set-unveil-next-generation-roadster-sports-ev-after-years-delay-2026-10-15/) · [WIRED technical explanation](https://www.wired.com/story/how-tesla-made-its-new-230-mph-car-fly) · [AP](https://apnews.com/article/7d5f19665435b7408025bfb7a2f2f0b7) · [NASA](https://www.nasa.gov/x-57-maxwell/) · [FAA](https://www.faa.gov/air-taxis)
+
+---
+
+## Project organization
+
+```text
+src/
+  Intro.tsx         official-player film entrance, reveal layers, magnetic CTA
+  Film.tsx          director, 12 chapter-gated stages, media and evidence
+  Vehicle.tsx       handcrafted mesh surfaces and animated 3D subsystems
+  Lab.tsx           interactive component explorer and physics simulation
+  research.ts       source-backed technical annotations
+  data.ts           12 authored narrator scripts and teaching content
+  audio.ts          dual-voice playback routing
+  physics.ts        transparent educational equations
+  cinema.css        cinematic montage and documentary design language
+  styles.css        component lab, responsive and accessibility styles
+  main.tsx          app entry
+tools/
+  render_narration.py  optional local natural-TTS batch renderer
+public/
+  audio/README.md
+  favicon.svg
+SOURCES.md
+```
+
+---
+
+### Why this exists
+
+A spectacle can capture attention, but engineering deserves explanation. Beyond Gravity turns the viral question—**How did that car leave the ground?**—into something you can watch, explore, and test.
+
+> *The future doesn't become real because it looks like science fiction. It becomes real when the science stands up to scrutiny.*
