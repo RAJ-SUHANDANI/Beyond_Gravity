@@ -167,3 +167,20 @@ SOURCES.md
 A spectacle can capture attention, but engineering deserves explanation. Beyond Gravity turns the viral question—**How did that car leave the ground?**—into something you can watch, explore, and test.
 
 > *The future doesn't become real because it looks like science fiction. It becomes real when the science stands up to scrutiny.*
+
+
+## Director's Cut update · October 2026
+
+The production currently uses a **single dark design system**. The light/dark theme toggle was intentionally retired to improve documentary consistency and prevent the low-contrast overlaps observed during review. Responsive typography and the bottom player were redesigned around unobstructed caption-safe areas.
+
+### New chapter-level animated explanations
+A set of authored SVG/CSS instrument-style animations varies by chapter: animated traction vectors, a propulsion jet, the sense-compute-correct control loop, certification tradeoffs, architecture navigation, and hover-energy instrumentation. These are **illustrative graphics**, not computational fluid dynamics or recorded footage.
+
+### Improved captions and sound
+The voice player now dispatches caption segments while speech proceeds, based on browser word boundaries or an approximate position in the available local MP3. This is an improvement over displaying the first paragraph as a static overlay, but **precise phrase timing still requires final mastered audio and aligned captions**. If the local files are absent, the browser's built-in speech synthesis remains a variable-quality fallback. The repo does not currently bundle natural neural voice recordings.
+
+### Component inspection
+The inspection stage uses the same procedural geometry definitions for the selected wheel, fan, nozzle, reservoir, controller and body, and suppresses the corresponding original subsystem when it is being isolated. The original car still represents a conceptual educational model, not licensed manufacturer CAD.
+
+### Production-readiness caveats
+A GitHub Actions green build confirms TypeScript and Vite completion, **not visual correctness, voice quality, accessibility certification, frame rate, or copyright clearance**. Before advertising the project as finished, test actual desktop/mobile browsers, obtain usable locally mastered two-voice narration, verify publisher-hosted media permissions, and capture measured performance/accessibility results. We do not invent a numerical "10/10" audit grade without measured verification.
