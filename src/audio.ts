@@ -1,50 +1,78 @@
 import {chapters,parts,type PartId} from './data';
+
+/**
+ * Documentary audio director.
+ * Local, legally generated neural narration takes precedence over OS voices.
+ * Captions are derived from the same script and advanced by speech boundaries.
+ * For supplied audio, distribute precise VTT cue files for studio-grade timing;
+ * without them, word-weight timing is an explicit approximation.
+ */
 type Role='male'|'female';
-let currentAudio:HTMLAudioElement|null=null;
-let token=0;
-export function stopNarration(){token++;currentAudio?.pause();currentAudio=null;if(typeof window!=='undefined'&&'speechSynthesis'in window)window.speechSynthesis.cancel()}
-function selectVoice(role:Role):SpeechSynthesisVoice|null{
- if(typeof window==='undefined'||!('speechSynthesis'in window))return null;
- const all=window.speechSynthesis.getVoices().filter(v=>v.lang.toLowerCase().startsWith('en'));
- if(!all.length)return null;
- // Premium OS neural voice is preferred; unsupported voices cannot be magically replaced with one.
- // Do not distort stock voices with extreme synthetic pitch or slow playback.
- const fav=role==='female'
- ? ['Microsoft Jenny Online','Microsoft Aria Online','Google UK English Female','Samantha','Karen','Victoria','Zira']
- : ['Microsoft Guy Online','Microsoft Ryan Online','Google UK English Male','Daniel','Alex','David'];
- for(const name of fav){const v=all.find(x=>x.name.toLowerCase().includes(name.toLowerCase()));if(v)return v;}
- const neural=all.filter(v=>/neural|natural|enhanced|premium|online/i.test(v.name));
- if(neural.length>0)return neural[role==='male'?0:Math.min(1,neural.length-1)];
- return all[role==='male'?0:Math.min(1,all.length-1)];
-}
-function mp3Asset(filename:string){return import.meta.env.BASE_URL+'audio/'+filename+'.mp3'}
-export async function speak(text:string,role:Role,asset:string,onEnd?:()=>void){
- stopNarration();const active=token;
- // Prefer locally rendered, mastered, legally usable neural clips.
- const audio=new Audio(asset);audio.preload='auto';audio.volume=1;currentAudio=audio;
- try{
-  await audio.play();
-  if(active!==token){audio.pause();return}
-  audio.onended=()=>{if(active===token){currentAudio=null;onEnd?.()}};
-  audio.onerror=()=>{if(active===token)fallback()};
-  return;
- }catch{audio.pause();if(active!==token)return;currentAudio=null;}
- function fallback(){
-  if(active!==token)return;
-  if(!('speechSynthesis'in window)){onEnd?.();return}
-  window.speechSynthesis.cancel();
-  const utterance=new SpeechSynthesisUtterance(text);
-  utterance.voice=selectVoice(role);
-  utterance.lang=utterance.voice?.lang||'en-US';
-  utterance.rate=role==='male'?.96:1.03;
-  utterance.pitch=1;
-  utterance.volume=1;
-  utterance.onend=()=>{if(active===token)onEnd?.()};
-  utterance.onerror=()=>{if(active===token)onEnd?.()};
-  window.speechSynthesis.speak(utterance);
+type Cue={text:string,start:number,end:number};
+type CueHandler=(text:string,index:number,count:number)=>void;
+let active:HTMLAudioElement|null=null;
+let serial=0;
+let cancelFallback:undefined|(()=>void);
+export function stopNarration(){serial++;active?.pause();active=null;cancelFallback?.();cancelFallback=undefined;if(typeof window!=='undefined'&&'speechSynthesis'in window)window.speechSynthesis.cancel()}
+
+export function makeCues(script:string):Cue[]{
+ const words=[...script.matchAll(/\S+/g)];
+ const cues:Cue[]=[];
+ for(let i=0;i<words.length;){
+   const start=words[i].index??0;let end=i;let length=0;
+   while(end<words.length && end-i<15){
+     const w=words[end][0];length+=w.length+1;end++;
+     if(/[.!?]$/.test(w)&&end-i>=5)break;
+     if(length>=88 && end-i>=9)break;
+   }
+   const last=words[end-1];const finish=(last.index??start)+last[0].length;
+   cues.push({text:script.slice(start,finish).trim(),start,end:finish});
+   i=end;
  }
- fallback();
+ return cues.length?cues:[{text:script,start:0,end:script.length}];
 }
-export function narrateChapter(index:number,onEnd?:()=>void){const chapter=chapters[index];if(chapter)return speak(chapter.narration,'male',mp3Asset('male-'+String(index).padStart(2,'0')),onEnd)}
-export function narratePart(id:PartId,onEnd?:()=>void){const part=parts.find(p=>p.id===id);if(part)return speak(part.female,'female',mp3Asset('female-'+id),onEnd)}
-export function narrateIntro(onEnd?:()=>void){return speak('Beyond Gravity. An interactive journey into the science of flying cars. Enter the story and experience the machine.','female',mp3Asset('female-intro'),onEnd)}
+export function getNarrationCues(index:number){return makeCues(chapters[index]?.narration??'')}
+
+function preferredVoice(role:Role){
+ if(!('speechSynthesis'in window))return null;
+ const list=window.speechSynthesis.getVoices().filter(v=>v.lang.toLowerCase().startsWith('en'));
+ const female=['Jenny','Aria','Samantha','Karen','Victoria','Zira','Serena'];
+ const male=['Guy','Ryan','Daniel','Alex','David','Arthur'];
+ const names=role==='female'?female:male;
+ for(const name of names){const match=list.find(v=>v.name.toLowerCase().includes(name.toLowerCase()));if(match)return match}
+ return list.find(v=>/natural|neural|enhanced|premium/i.test(v.name))||list[role==='female'?Math.min(1,list.length-1):0]||null;
+}
+function asset(name:string){return import.meta.env.BASE_URL+'audio/'+name+'.mp3'}
+function play(script:string,role:Role,src:string,onEnd?:()=>void,onCue?:CueHandler){
+ stopNarration();const mine=serial;const cues=makeCues(script);
+ let prev=-1;
+ const update=(index:number)=>{if(mine!==serial)return;index=Math.min(Math.max(index,0),cues.length-1);if(index===prev)return;prev=index;onCue?.(cues[index].text,index,cues.length)};
+ update(0);
+ const audio=new Audio(src);audio.preload='auto';active=audio;
+ const done=()=>{if(mine!==serial)return;active=null;onEnd?.()};
+ let fellBack=false;
+ const fallback=()=>{if(fellBack||mine!==serial)return;fellBack=true;audio.pause();active=null;
+   if(!('speechSynthesis'in window)){done();return}
+   const synth=window.speechSynthesis;const sentence=new SpeechSynthesisUtterance(script);
+   sentence.voice=preferredVoice(role);
+   sentence.lang=sentence.voice?.lang||'en-US';
+   sentence.rate=role==='male'?.96:1.02;
+   sentence.pitch=1;
+   sentence.onboundary=e=>{if(mine!==serial)return;const charIndex=e.charIndex;let i=0;while(i<cues.length-1&&cues[i].end<=charIndex)i++;update(i)};
+   sentence.onend=done;sentence.onerror=done;
+   synth.cancel();synth.speak(sentence);
+   cancelFallback=()=>{sentence.onend=null;sentence.onerror=null;synth.cancel()};
+ };
+ audio.onended=()=>{update(cues.length-1);done()};
+ audio.onerror=fallback;
+ audio.ontimeupdate=()=>{if(mine!==serial||!Number.isFinite(audio.duration)||!audio.duration)return;
+   // Approximates cue timestamps for rendered recordings without an aligned VTT.
+   const position=(audio.currentTime/audio.duration)*script.length;
+   let i=0;while(i<cues.length-1&&cues[i].end<position)i++;update(i);
+ };
+ void audio.play().catch(fallback);
+ return ()=>{if(mine===serial)stopNarration()};
+}
+export function narrateChapter(i:number,onEnd?:()=>void,onCue?:CueHandler){const text=chapters[i]?.narration;if(!text){onEnd?.();return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
+export function narratePart(id:PartId,onEnd?:()=>void,onCue?:CueHandler){const p=parts.find(x=>x.id===id);if(!p)return;return play(p.female,'female',asset('female-'+id),onEnd,onCue)}
+export function narrateIntro(onEnd?:()=>void,onCue?:CueHandler){return play('Beyond Gravity. A documentary you can step inside. The stunt. The science. The future.','female',asset('female-intro'),onEnd,onCue)}

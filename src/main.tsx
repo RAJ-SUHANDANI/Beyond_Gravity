@@ -1,3 +1,5 @@
-import React from 'react';import{createRoot}from'react-dom/client';import App from './App';import './styles.css';import './cinema.css';createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);import './refinements.css';
-
-import './layout-fix.css';
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import App from './App';
+import './design.css';
+createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);
