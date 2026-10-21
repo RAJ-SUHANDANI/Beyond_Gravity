@@ -34,7 +34,7 @@ export function Intro({onEnter}:{onEnter:()=>void}){
     </div>
   </div>
   <div className="intro-timeline" aria-hidden="true"><span>00:00</span><div><i/></div><span>INTRO</span></div>
-  <div className="intro-flash" aria-hidden="true"/>
+  <div className="intro-flash" aria-hidden="true"/><div className="intro-creator-credit">Made by Raj Suhandani</div>
   <div className="intro-caption-hidden">The opening video is Tesla's 2017 Roadster unveil, not the 2026 flight demo. Beyond Gravity is independent and not endorsed by Tesla or Netflix.</div>
  </div>
 }
