@@ -5,3 +5,5 @@ import './design.css';
 createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);
 
 import './science.css';
+
+import './polish.css';

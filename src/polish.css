@@ -1,0 +1,44 @@
+/* Documentary playback and mobile science-accessibility finishing pass. */
+.mobile-science-shortcut{display:none}
+.film-audio-clock{
+  display:block;color:#b9d6d2;
+  font:9px 'DM Mono',monospace;letter-spacing:.11em;
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.film-activity .film-player-status{min-height:16px}
+.film-bottom .transport-main:focus-visible,
+.film-top-actions .film-glass-button:focus-visible,
+.mobile-science-shortcut:focus-visible,
+.film-embed-card button:focus-visible,
+.science-header button:focus-visible{
+ outline:2px solid #c0ffef;
+ outline-offset:4px;
+}
+@media (max-width:1059px) {
+ .film-audio-clock{font-size:8px;letter-spacing:.04em}
+}
+@media (max-width:570px) {
+ .mobile-science-shortcut{
+   display:flex;align-items:center;justify-content:center;gap:7px;
+   position:fixed;top:110px;right:12px;z-index:84;
+   min-height:36px;padding:8px 10px;
+   border:1px solid #8fe3d272;background:rgba(10,29,40,.93);
+   color:#c4f5e8;font:9px 'DM Mono',monospace;
+   letter-spacing:.055em;cursor:pointer;
+   box-shadow:0 5px 20px #0005;
+ }
+ .mobile-science-shortcut:active{background:#204853}
+ .film-script{
+   pointer-events:none;
+   max-height:56px;
+   overflow:auto;
+   text-align:center;
+ }
+ .film-creator-credit{font-size:8px!important}
+}
+@media (max-width:360px) {
+ .mobile-science-shortcut{top:103px;font-size:8px;padding:7px}
+}
+@media (prefers-reduced-motion:reduce) {
+ .film-root:before,.film-reveal-curtain,.film-reveal-line{animation:none!important}
+}

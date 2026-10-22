@@ -15,6 +15,26 @@ let active:HTMLAudioElement|null=null;
 let serial=0;
 let cancelFallback:undefined|(()=>void);
 export function stopNarration(){serial++;active?.pause();active=null;cancelFallback?.();cancelFallback=undefined;if(typeof window!=='undefined'&&'speechSynthesis'in window)window.speechSynthesis.cancel()}
+/** Pause and resume the actual recording position; chapter navigation remains a full stop. */
+export function pauseNarration():boolean{
+ if(active && !active.paused){active.pause();return true}
+ if(typeof window!=='undefined' && 'speechSynthesis' in window && window.speechSynthesis.speaking && !window.speechSynthesis.paused){
+  window.speechSynthesis.pause();return true
+ }
+ return false
+}
+export function resumeNarration():boolean{
+ if(active && active.paused){void active.play().catch(()=>{});return true}
+ if(typeof window!=='undefined' && 'speechSynthesis' in window && window.speechSynthesis.paused){
+  window.speechSynthesis.resume();return true
+ }
+ return false
+}
+export function narrationPosition():{position:number,duration:number}|null{
+ if(!active || !Number.isFinite(active.duration) || active.duration<=0)return null
+ return {position:active.currentTime,duration:active.duration}
+}
+
 
 export function makeCues(script:string):Cue[]{
  const words=[...script.matchAll(/\S+/g)];

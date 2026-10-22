@@ -13,6 +13,7 @@ export class Soundscape{
  private started=false;
  private muted=false;
  private narrating=false;
+ private paused=false;
  private chapter=0;
 
  start(){
@@ -40,6 +41,7 @@ export class Soundscape{
  }
 
  setMuted(muted:boolean){this.muted=muted;this.updateGain()}
+ setPaused(paused:boolean){this.paused=paused;this.updateGain()}
  setNarrating(narrating:boolean){this.narrating=narrating;this.updateGain()}
  setChapter(index:number){
   this.chapter=index;if(!this.ctx||!this.filter)return;
@@ -50,7 +52,7 @@ export class Soundscape{
   this.filter.frequency.setTargetAtTime(700+(index%4)*135,now,2.4);
   this.pulse();
  }
- private updateGain(){if(!this.ctx||!this.master)return;const goal=this.muted?0:this.narrating ? 0.014 : 0.042;this.master.gain.cancelScheduledValues(this.ctx.currentTime);this.master.gain.setTargetAtTime(goal,this.ctx.currentTime,.7)}
+ private updateGain(){if(!this.ctx||!this.master)return;const goal=(this.muted||this.paused)?0:(this.narrating ? 0.014 : 0.042);this.master.gain.cancelScheduledValues(this.ctx.currentTime);this.master.gain.setTargetAtTime(goal,this.ctx.currentTime,.7)}
  private pulse(){
   if(!this.ctx||this.muted)return;
   const ctx=this.ctx;const length=Math.floor(ctx.sampleRate*.33);
