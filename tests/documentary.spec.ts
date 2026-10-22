@@ -4,6 +4,9 @@ test('opening plays as a cinematic entry and exposes an accessible enter control
  await expect(page.getByRole('button',{name:/enter documentary experience/i})).toBeVisible();
  await expect(page.getByText(/Made by Raj Suhandani/i).first()).toBeVisible();
  await expect(page.locator('.intro-video iframe')).toHaveAttribute('src',/7p5LxFdc-Qg/);
+ const backgroundPlayer=page.locator('.intro-video iframe');
+ await expect(backgroundPlayer).toHaveCSS('pointer-events','none');
+ await expect(backgroundPlayer).toHaveAttribute('src',/controls=0.*disablekb=1.*fs=0/);
 });
 test('enter documentary, navigate chapters and open science theater',async({page})=>{
  await page.goto('/');

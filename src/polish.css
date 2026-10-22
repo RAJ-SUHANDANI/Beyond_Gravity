@@ -263,3 +263,13 @@
  .cinema-intro .intro-middle{top:36%}
  .cinema-intro .intro-title{font-size:clamp(64px,11.8vh,110px)}
 }
+
+/* Opening video is a non-interactive cinematic backdrop, never an embedded
+   video player. Stop hover, tap and click input reaching YouTube's native
+   pause/seek/next overlays; preserve cursor parallax on .cinema-intro. */
+.cinema-intro .intro-video,
+.cinema-intro .intro-video iframe{
+  pointer-events:none!important;
+  user-select:none;
+  -webkit-user-select:none;
+}
