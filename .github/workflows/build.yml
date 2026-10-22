@@ -56,11 +56,29 @@ jobs:
         run: |
           git config user.name "Beyond Gravity QA"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/qa/*.png
-          if git diff --cached --quiet; then
-            echo "No screenshots changed"
-          else
+          # Capture the generated files before refreshing the working tree.
+          # Rebase cannot merge competing binary PNGs when several CI runs overlap.
+          mkdir -p /tmp/beyond-gravity-qa
+          cp docs/qa/*.png /tmp/beyond-gravity-qa/
+          published=false
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p docs/qa
+            cp /tmp/beyond-gravity-qa/*.png docs/qa/
+            git add docs/qa/*.png
+            if git diff --cached --quiet; then
+              echo "QA screenshots already match main"
+              published=true
+              break
+            fi
             git commit -m "test: refresh rendered desktop and mobile QA captures"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            if git push origin HEAD:main; then
+              published=true
+              break
+            fi
+            echo "A newer commit arrived; retrying screenshot-only publish"
+          done
+          if [ "$published" != "true" ]; then
+            echo "::warning::QA screenshots are still available in the uploaded artifact; repository screenshot publish conflicted."
           fi
