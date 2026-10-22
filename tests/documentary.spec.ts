@@ -7,6 +7,12 @@ test('opening plays as a cinematic entry and exposes an accessible enter control
  const backgroundPlayer=page.locator('.intro-video iframe');
  await expect(backgroundPlayer).toHaveCSS('pointer-events','none');
  await expect(backgroundPlayer).toHaveAttribute('src',/controls=0.*disablekb=1.*fs=0/);
+ // The previous fake playback timeline is removed from the entrance entirely.
+ await expect(page.locator('.intro-timeline')).toHaveCount(0);
+ // A still from the SAME video shields any YouTube-owned play UI until the clip runs.
+ await expect(page.locator('.intro-video-poster')).toBeVisible();
+ await expect(page.locator('.intro-video-poster img')).toHaveAttribute('src',/7p5LxFdc-Qg/);
+ await expect(page.getByRole('button',{name:/enter documentary experience/i})).toBeEnabled();
 });
 test('enter documentary, navigate chapters and open science theater',async({page})=>{
  await page.goto('/');
