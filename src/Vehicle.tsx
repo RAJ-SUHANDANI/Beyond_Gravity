@@ -103,7 +103,62 @@ function RacingWheel({x,z}:{x:number;z:number}){
 function AirFan({x,z,focus,onSelect,power}:{x:number,z:number,focus:boolean,onSelect?:Select,power?:number}){const rotor=useRef<Group>(null);useFrame((_,dt)=>{if(rotor.current)rotor.current.rotation.y+=dt*(focus?17:6)*(Math.max(.05,power??70)/70)});return <group position={[x,-.58,z]} onClick={e=>{e.stopPropagation();onSelect?.('fans')}} onPointerOver={()=>{document.body.style.cursor='pointer'}} onPointerOut={()=>{document.body.style.cursor='auto'}}><mesh><cylinderGeometry args={[.31,.31,.11,36]}/><meshStandardMaterial color="#212e35" metalness={.9} roughness={.27}/></mesh><mesh position={[0,-.07,0]}><torusGeometry args={[.3,.017,8,40]}/><meshStandardMaterial color={c} emissive={c} emissiveIntensity={focus?2:.6}/></mesh><group ref={rotor}>{Array.from({length:7},(_,i)=><mesh key={i} rotation={[0,i*Math.PI*2/7,0]} position={[.125,-.055,0]}><boxGeometry args={[.25,.023,.07]}/><meshStandardMaterial color="#9fc2c4" metalness={.82}/></mesh>)}</group></group>}
 function Nozzle({x,z,onSelect,focus}:{x:number,z:number,onSelect?:Select,focus:boolean}){const jet=useRef<Mesh>(null);useFrame(s=>{if(jet.current)jet.current.scale.y=focus?1+Math.sin(s.clock.elapsedTime*18)*.17:.33});return <group position={[x,-.07,z]} rotation={[Math.PI/2,0,0]} onClick={e=>{e.stopPropagation();onSelect?.('thrusters')}}><mesh><cylinderGeometry args={[.115,.17,.34,30]}/><meshStandardMaterial color="#556874" metalness={.96} roughness={.2}/></mesh><mesh position={[0,.19,0]}><torusGeometry args={[.16,.025,8,30]}/><meshStandardMaterial color="#d7ecf1" metalness={.8}/></mesh><mesh ref={jet} position={[0,.40,0]}><coneGeometry args={[.12,.45,24]}/><meshBasicMaterial color="#afeefa" transparent opacity={focus?.38:.11} depthWrite={false}/></mesh></group>}
 function TubeLine({points,color='#b3cbd1',radius=.012}:{points:[number,number,number][],color?:string,radius?:number}){const path=useMemo(()=>new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))),[points]);return <mesh><tubeGeometry args={[path,45,radius,7,false]}/><meshStandardMaterial color={color} emissive={color} emissiveIntensity={.26} metalness={.42}/></mesh>}
-export function Car({focus='body',exploded=false,interactive=false,onSelect,sim,inspection=false}:{focus?:PartId;exploded?:boolean;interactive?:boolean;onSelect?:Select;sim?:SimState;inspection?:boolean}){
+export /* Roadster-inspired independent exterior surfacing: deliberately no Tesla badges,
+   proprietary CAD, decal downloads, or claims that hypothetical internals are OEM. */
+function ExteriorDetailing(){
+ return <group>
+  {/* Sculpted hood creases and split nose in dark clearcoat, in the studio lighting. */}
+  {[-1,1].map(side=><group key={'body-detail-'+side}>
+   <TubeLine color="#c0646b" radius={.009} points={[[side*.31,.30,-2.49],[side*.46,.36,-2.15],[side*.65,.44,-1.64],[side*.66,.49,-1.16]]}/>
+   <TubeLine color="#25151d" radius={.012} points={[[side*.80,.24,-.74],[side*1.02,.23,-.25],[side*1.11,.16,.54],[side*.98,.12,1.30]]}/>
+   <TubeLine color="#51242f" radius={.008} points={[[side*.77,.10,-1.55],[side*1.06,.13,-.82],[side*1.13,.07,.65]]}/>
+   {/* Headlamp has recessed dark housing, frosted lens and a sharply drawn light strip. */}
+   <mesh position={[side*.76,.08,-2.37]} rotation={[.11,side*.16,0]} scale={[.38,.065,.23]}>
+    <sphereGeometry args={[1,20,12]}/>
+    <meshPhysicalMaterial color="#101b22" metalness={.65} roughness={.14} clearcoat={1}/>
+   </mesh>
+   <mesh position={[side*.78,.13,-2.40]} rotation={[.07,side*.15,0]} scale={[.24,.026,.11]}>
+    <sphereGeometry args={[1,20,12]}/>
+    <meshPhysicalMaterial color="#e6f7f7" emissive="#e9ffff" emissiveIntensity={1.5} roughness={.18} clearcoat={1}/>
+   </mesh>
+   <TubeLine color="#d7f6f5" radius={.014} points={[[side*.58,.145,-2.51],[side*.72,.147,-2.49],[side*.91,.136,-2.36]]}/>
+   {/* Side intakes / door handles; low contrast like real automotive detailing. */}
+   <mesh position={[side*1.08,-.025,.61]} rotation={[0,side*.16,0]} scale={[.055,.068,.34]}>
+    <sphereGeometry args={[1,16,12]}/>
+    <meshStandardMaterial color="#121920" roughness={.45} metalness={.68}/>
+   </mesh>
+   <mesh position={[side*1.11,.19,.14]} rotation={[0,side*.16,0]}>
+    <boxGeometry args={[.026,.018,.22]}/><meshStandardMaterial color="#657177" roughness={.28} metalness={.95}/>
+   </mesh>
+   <mesh position={[side*1.13,.27,-.45]} rotation={[0,side*.24,0]} scale={[.055,.042,.12]}>
+    <sphereGeometry args={[1,18,12]}/><meshPhysicalMaterial color="#a7c2c2" metalness={.82} roughness={.17}/>
+   </mesh>
+   {/* Rear light signature and integrated diffuser vanes. */}
+   <mesh position={[side*.66,.10,2.48]}>
+    <boxGeometry args={[.51,.046,.048]}/>
+    <meshStandardMaterial color="#aa1423" emissive="#ec2b36" emissiveIntensity={1.15}/>
+   </mesh>
+   <mesh position={[side*.58,-.36,2.56]} rotation={[0,0,side*.06]}>
+    <boxGeometry args={[.035,.14,.20]}/>
+    <meshStandardMaterial color="#0c151b" roughness={.45} metalness={.65}/>
+   </mesh>
+   {/* Carbon look wheel-arch trim, independent of rotating wheel geometry. */}
+   {[-1.67,1.64].map(z=><mesh key={z} position={[side*1.14,-.37,z]} rotation={[0,side*Math.PI/2,0]}>
+    <torusGeometry args={[.487,.019,9,60,Math.PI]}/>
+    <meshStandardMaterial color="#111c25" metalness={.52} roughness={.39}/>
+   </mesh>)}
+  </group>)}
+  <mesh position={[0,-.26,-2.57]}><boxGeometry args={[1.19,.09,.055]}/>
+    <meshStandardMaterial color="#080f14" metalness={.6} roughness={.5}/></mesh>
+  <mesh position={[0,.22,2.44]}><boxGeometry args={[1.55,.018,.08]}/>
+    <meshStandardMaterial color="#090f16" metalness={.56} roughness={.46}/></mesh>
+  {[-.36,0,.36].map(x=><mesh key={'rear-vent-'+x} position={[x,-.28,2.58]}>
+    <boxGeometry args={[.28,.025,.026]}/>
+    <meshStandardMaterial color="#38434b" metalness={.7} roughness={.3}/>
+  </mesh>)}
+ </group>
+}
+function Car({focus='body',exploded=false,interactive=false,onSelect,sim,inspection=false}:{focus?:PartId;exploded?:boolean;interactive?:boolean;onSelect?:Select;sim?:SimState;inspection?:boolean}){
  const root=useRef<Group>(null),shell=useRef<Group>(null),rotors=useRef<Group>(null),tank=useRef<Group>(null),exhaust=useRef<Group>(null),controller=useRef<Group>(null);
  const hull=useMemo(()=>loft(longitudinal),[]);const canopy=useMemo(()=>loft([[-1.42,.34,.46,.08],[-1.13,.46,.71,.23],[-.85,.55,.83,.26],[-.18,.60,.86,.27],[.58,.60,.79,.23],[1.12,.46,.61,.1]]),[]);
  useFrame((s,dt)=>{if(!root.current)return;root.current.rotation.y+=interactive?0:dt*.045;root.current.position.y=interactive?0:Math.sin(s.clock.elapsedTime*.62)*.045;
@@ -112,7 +167,7 @@ export function Car({focus='body',exploded=false,interactive=false,onSelect,sim,
  return <group ref={root} rotation={[0,-.24,0]}>
   <group ref={shell} visible={!(inspection&&focus==='body')} onClick={e=>{e.stopPropagation();onSelect?.('body')}}>
    <mesh geometry={hull} castShadow receiveShadow><meshPhysicalMaterial color={bodyRed} metalness={.91} roughness={.18} clearcoat={1} clearcoatRoughness={.08} side={THREE.DoubleSide}/></mesh>
-   <mesh geometry={canopy} castShadow><meshPhysicalMaterial color="#0a1820" metalness={.63} roughness={.07} clearcoat={1} transmission={.15} transparent opacity={.97} side={THREE.DoubleSide}/></mesh>
+   <ExteriorDetailing/><mesh geometry={canopy} castShadow><meshPhysicalMaterial color="#0a1820" metalness={.63} roughness={.07} clearcoat={1} transmission={.15} transparent opacity={.97} side={THREE.DoubleSide}/></mesh>
    <mesh position={[0,.65,-.8]} rotation={[.24,0,0]}><boxGeometry args={[1.25,.012,.018]}/><meshStandardMaterial color="#a4b2b7" metalness={.96}/></mesh>
    {[-1,1].map(side=><group key={side}>
       <TubeLine color="#4d151b" radius={.05} points={[[side*.86,-.16,-2.34],[side*1.17,-.28,-1.62],[side*1.18,-.28,.45],[side*1.12,-.25,1.96]]}/>
@@ -209,4 +264,14 @@ function ElectricVTOL({sim}:{sim?:SimState}){
   }))}
  </group>
 }
-export function VehicleScene({chapter=0,focus='body',exploded=false,interactive=false,onSelect,sim,inspection=false,variant='car',theme='dark',onReady}:{chapter?:number;focus?:PartId;exploded?:boolean;interactive?:boolean;onSelect?:Select;sim?:SimState;inspection?:boolean;variant?:'car'|'evtol';theme?:'dark'|'light';onReady?:()=>void}){return <Canvas dpr={typeof window!=='undefined'&&window.innerWidth<800?[1,1.12]:[1,1.45]} shadows camera={{position:[4,1.7,7],fov:38}} gl={{alpha:true,antialias:true,powerPreference:'high-performance'}} onCreated={({gl})=>{gl.setClearColor('#030609',0)}}><CinematicReflections/><SceneFrameProbe onReady={onReady}/><ambientLight intensity={theme==='light'?2.1:1.25}/><hemisphereLight args={['#e9fbff','#263a48',1.6]}/><directionalLight position={[5,8,4]} intensity={4.5} color="#edf9ff" castShadow shadow-mapSize={[1024,1024]}/><spotLight position={[-5,5,-6]} angle={.62} penumbra={.9} intensity={80} color="#a2e4df"/><pointLight position={[4,1.2,5]} intensity={26} color="#f3b7b7" distance={16}/><Studio/><ContactShadows position={[0,-1.01,0]} opacity={.36} scale={9} blur={2.3} far={7} resolution={256} frames={1}/>{variant==='evtol'?<ElectricVTOL sim={sim}/>:<group><group position={inspection?[-1.95,-.3,0]:[0,0,0]} scale={inspection?.53:1}><Car focus={focus} exploded={exploded} interactive={interactive} onSelect={onSelect} sim={sim} inspection={inspection}/></group>{inspection&&<FocusPart part={focus} sim={sim}/>}</group>}{interactive?<OrbitControls enablePan={false} minDistance={3} maxDistance={11} maxPolarAngle={Math.PI*.82} target={[0,0,0]}/>:<CameraRig chapter={chapter}/>}</Canvas>}
+export function VehicleScene({chapter=0,focus='body',exploded=false,interactive=false,onSelect,sim,inspection=false,variant='car',theme='dark',onReady}:{chapter?:number;focus?:PartId;exploded?:boolean;interactive?:boolean;onSelect?:Select;sim?:SimState;inspection?:boolean;variant?:'car'|'evtol';theme?:'dark'|'light';onReady?:()=>void}){
+ const lowPower=typeof window!=='undefined' && (
+  window.innerWidth<720 ||
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+  (typeof navigator!=='undefined' && (
+   ((navigator as Navigator & {deviceMemory?:number}).deviceMemory??8)<=4 ||
+   !!(navigator as Navigator & {connection?:{saveData?:boolean}}).connection?.saveData
+  ))
+ );
+ const deviceDpr=lowPower?[1,1.08]:[1,1.4];
+ return <Canvas dpr={deviceDpr as [number,number]} shadows={!lowPower} camera={{position:[4,1.7,7],fov:38}} gl={{alpha:true,antialias:true,powerPreference:'high-performance'}} onCreated={({gl})=>{gl.setClearColor('#030609',0)}}><CinematicReflections/><SceneFrameProbe onReady={onReady}/><ambientLight intensity={theme==='light'?2.1:1.25}/><hemisphereLight args={['#e9fbff','#263a48',1.6]}/><directionalLight position={[5,8,4]} intensity={4.2} color="#edf9ff" castShadow={!lowPower} shadow-mapSize={[lowPower?512:1024,lowPower?512:1024]}/><spotLight position={[-5,5,-6]} angle={.62} penumbra={.9} intensity={80} color="#a2e4df"/><pointLight position={[4,1.2,5]} intensity={26} color="#f3b7b7" distance={16}/><Studio/><ContactShadows position={[0,-1.01,0]} opacity={.33} scale={9} blur={2.3} far={7} resolution={lowPower?128:256} frames={1}/>{variant==='evtol'?<ElectricVTOL sim={sim}/>:<group><group position={inspection?[-1.95,-.3,0]:[0,0,0]} scale={inspection?.53:1}><Car focus={focus} exploded={exploded} interactive={interactive} onSelect={onSelect} sim={sim} inspection={inspection}/></group>{inspection&&<FocusPart part={focus} sim={sim}/>}</group>}{interactive?<OrbitControls enablePan={false} minDistance={3} maxDistance={11} maxPolarAngle={Math.PI*.82} target={[0,0,0]}/>:<CameraRig chapter={chapter}/>}</Canvas>}

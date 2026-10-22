@@ -10,4 +10,10 @@ export const bounds:{[K in SimKey]:{min:number;max:number;step:number;unit:strin
  fanPower:{min:0,max:100,step:10,unit:'%',title:'SUCTION FAN COMMAND'}
 };
 export function adjust(s:SimState,k:SimKey,delta:number){const b=bounds[k];return {...s,[k]:Math.min(b.max,Math.max(b.min,+(s[k]+delta*b.step).toFixed(2)))}}
-export function report(s:SimState){return {...hoverPower(s.mass,s.area,s.efficiency),suctionNewtons:suctionForce(s.pressure,1.5),rotorScale:Math.sqrt(s.area/15)}}
+export function report(s:SimState){
+ // Explicit teaching assumption: the specified pressure difference is the
+ // system's ideal full-command potential. At zero fan command there is no
+ // maintained underbody pressure differential. Real fan curves are nonlinear.
+ const effectivePressure=s.pressure*Math.min(1,Math.max(0,s.fanPower/100));
+ return {...hoverPower(s.mass,s.area,s.efficiency),effectivePressure,suctionNewtons:suctionForce(effectivePressure,1.5),rotorScale:Math.sqrt(s.area/15)};
+}

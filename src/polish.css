@@ -170,3 +170,33 @@
 /* Accessible narrator speed switch; no additional footer controls to crowd captions. */
 .film-root .film-speed-control{min-width:53px;font:11px 'DM Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:0;padding-inline:12px}
 @media(max-width:580px){.film-root .film-speed-control{min-width:40px;padding-inline:7px;font-size:10px}}
+
+/* Close controls belong to the sourcebook, so long panels never obscure exit. */
+.film-root .film-dossier{z-index:88;scrollbar-gutter:stable;overscroll-behavior:contain}
+.film-root .dossier-header{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:-27px;z-index:3;background:#0b1925f5;padding:18px 0 14px;margin-top:-18px;border-bottom:1px solid #b4eadd2f}
+.film-root .dossier-header .filmtag{margin:0}
+.film-root .dossier-header button{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;min-height:38px;padding:8px 10px;cursor:pointer;background:#1c3c46;border:1px solid #9dd7d06d;color:#e0fff4;font:9px 'DM Mono',monospace;letter-spacing:.06em}
+.film-root .dossier-header button:hover{background:#315b60}
+.film-root .dossier-header button:focus-visible{outline:2px solid #b8fff0;outline-offset:3px}
+.film-root .film-top-actions{z-index:90}
+
+/* Production layout: prioritize readable explanations over ornamental density. */
+.film-root .film-stage p{line-height:1.75}
+.film-root .film-stage-content{scroll-padding-bottom:26px}
+.film-root .film-dossier h3{line-height:1.18}
+.film-root .film-dossier li{font-size:12px;line-height:1.65;margin-bottom:11px}
+.film-root .film-dossier a{min-height:30px;line-height:1.45}
+.film-root .film-script{font-size:clamp(12px,.96vw,15px);line-height:1.45;max-width:min(560px,42vw);text-wrap:pretty}
+@media(max-width:1059px){
+ .film-root .film-stage p{font-size:clamp(12px,1.25vw,14px)}
+ .film-root .film-script{max-width:calc(100vw - 28px);font-size:12px}
+}
+@media(max-width:620px){
+ .film-root .film-stage p{font-size:12px;line-height:1.75}
+ .film-root .film-stage-content{scroll-padding-bottom:60px}
+ .film-root .film-script{max-height:70px;overflow:hidden;left:50%;bottom:87px;padding:9px 12px;background:#07151af3}
+ .film-root .film-top-actions{gap:5px}
+ .film-root .film-top-actions .film-glass-button{min-width:37px;min-height:38px;padding:8px}
+ .film-root .film-dossier{width:calc(100vw - 24px);right:12px;top:104px;max-height:calc(100dvh - 195px);padding:20px}
+ .film-root .dossier-header{top:-20px;padding:13px 0;margin-top:-13px}
+}

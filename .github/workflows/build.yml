@@ -26,6 +26,14 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: mkdir -p docs/qa
       - run: npm run test
+      - name: Summarize measured Chromium frame cadence
+        if: always()
+        run: |
+          echo "### Documentary frame cadence (synthetic CI)" >> "$GITHUB_STEP_SUMMARY"
+          for f in docs/qa/performance-*.json; do
+            [ -e "$f" ] || continue
+            node -e 'const m=require("./"+process.argv[1]);console.log(m.viewport+": "+m.observations.averageFps+" FPS average, "+m.observations.p95FrameMs+" ms p95 frame time, "+m.observations.trackedResourceCount+" network resources. CI software performance is not end-user device FPS.")' "$f" >> "$GITHUB_STEP_SUMMARY"
+          done
       - name: Check Vercel completion for this exact commit
         if: ${{ github.event_name == 'push' }}
         env:
@@ -62,14 +70,14 @@ jobs:
           # Capture the generated files before refreshing the working tree.
           # Rebase cannot merge competing binary PNGs when several CI runs overlap.
           mkdir -p /tmp/beyond-gravity-qa
-          cp docs/qa/*.png /tmp/beyond-gravity-qa/
+          cp docs/qa/* /tmp/beyond-gravity-qa/
           published=false
           for attempt in 1 2 3; do
             git fetch origin main
             git reset --hard origin/main
             mkdir -p docs/qa
-            cp /tmp/beyond-gravity-qa/*.png docs/qa/
-            git add docs/qa/*.png
+            cp /tmp/beyond-gravity-qa/* docs/qa/
+            git add docs/qa/
             if git diff --cached --quiet; then
               echo "QA screenshots already match main"
               published=true

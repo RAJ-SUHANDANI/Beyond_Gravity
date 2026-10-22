@@ -205,3 +205,14 @@ Chapter 01 includes a **Watch the Actual 2026 Demonstration** control that opens
 ### October 2026 entrance footage
 
 The opening embeds [Tesla's 2026 'The Ramp | Roadster' demonstration](https://www.youtube.com/watch?v=7p5LxFdc-Qg) as a muted looping cinematic background. The original 2017 Roadster promotional film remains distinguishable as archival video in Chapter 02. Tesla owns the source footage; embedding does not grant rights to download, modify or redistribute it.
+
+
+## Production quality controls — October 2026
+
+Beyond Gravity ships an independent Roadster-inspired **conceptual engineering reconstruction**, not a Tesla CAD model, a manufacturer-authenticated internal design, or photogrammetry. The latest studio model adds original hood surfacing, recessed headlight housings, rocker details, mirrors, door trim, rear lighting and wheel-arch accents. These visual choices are independently authored and may differ from the actual 2026 prototype.
+
+**Sourcebook accessibility:** Field Notes have an always-visible dedicated Close button inside the sourcebook. Captions hide while the sourcebook is open, rather than colliding with source citations. All chapters are checked in Chromium for controls, sources and active scientific illustrations.
+
+**Coupled suction demonstration:** In the educational lab, the slider-free fan command sets a fraction of the theoretical maximum attainable underbody pressure. Thus force drops to zero with an off fan and increases with command. This is an expressly **linear teaching assumption**, not an empirical fan curve or a claim about Tesla's internal controls. Momentum-theory hover calculations remain a different conceptual rotor architecture.
+
+**Measured quality, not invented scores:** `.github/workflows/performance.yml` measures the **actual deployed Vercel entrance** with mobile and desktop Lighthouse, saving the reports as a downloadable GitHub Actions artifact and posting results to the workflow summary. The build workflow also measures actual documentary frame pacing with Chromium, storing per-viewport performance files in `docs/qa/`. Synthetic lab results are not field Core Web Vitals or an audio listening review. An 8.5/10 overall quality claim requires a verified browser, interaction, visual, auditory and performance assessment—not simply a green deployment.

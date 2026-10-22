@@ -1,0 +1,56 @@
+name: Real Lighthouse performance audit
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/qa/**'
+permissions:
+  contents: read
+concurrency:
+  group: beyond-gravity-lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install headless Chrome for an actual Lighthouse trace
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Wait for deployment of the audited revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          deployed=false
+          for i in $(seq 1 36); do
+            state=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/RAJ-SUHANDANI/Beyond_Gravity/commits/$GITHUB_SHA/status" | jq -r '[.statuses[] | select(.context=="Vercel") | .state][0] // "pending"')
+            echo "Vercel commit $GITHUB_SHA: $state"
+            if [ "$state" = success ]; then deployed=true; break; fi
+            if [ "$state" = failure ] || [ "$state" = error ]; then exit 1; fi
+            sleep 5
+          done
+          test "$deployed" = true
+      - name: Benchmark the real deployed URL (desktop and mobile)
+        env:
+          URL: https://beyondgravity-delta.vercel.app/
+        run: |
+          mkdir -p reports
+          export CHROME_PATH
+          CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome | head -n 1)
+          test -x "$CHROME_PATH"
+          echo "Chromium: $CHROME_PATH"
+          npx --yes lighthouse@12 "$URL" --quiet --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" --preset=desktop --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=reports/desktop.json
+          npx --yes lighthouse@12 "$URL" --quiet --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=reports/mobile.json
+          node tools/lighthouse-summary.mjs reports/desktop.json reports/mobile.json | tee reports/summary.md
+          cat reports/summary.md >> "$GITHUB_STEP_SUMMARY"
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-live-vercel-performance
+          path: reports/
+          retention-days: 14

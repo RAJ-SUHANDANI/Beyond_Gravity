@@ -14,8 +14,10 @@ test('every chapter displays its heading, technical illustration, sourcebook and
    await expect(page.locator('.beat-visual svg[role="img"]')).toBeVisible();
    await page.getByRole('button',{name:/FIELD NOTES/i}).click();
    await expect(page.locator('.film-dossier h3')).toBeVisible();
+   await expect(page.getByRole('button',{name:'Close Field Notes'})).toBeVisible();
    await expect(page.locator('.film-dossier a[href^="http"]')).not.toHaveCount(0);
-   await page.getByRole('button',{name:/FIELD NOTES/i}).click();
+   await page.getByRole('button',{name:'Close Field Notes'}).click();
+   await expect(page.locator('.film-dossier')).toHaveCount(0);
  }
 });
 
