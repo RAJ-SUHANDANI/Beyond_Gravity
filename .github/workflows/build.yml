@@ -23,6 +23,25 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: mkdir -p docs/qa
       - run: npm run test
+      - name: Check Vercel completion for this exact commit
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          deployed=false
+          for i in $(seq 1 24); do
+            state=$(curl -fsSL --retry 2 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/RAJ-SUHANDANI/Beyond_Gravity/commits/$GITHUB_SHA/status" | jq -r '[.statuses[] | select(.context=="Vercel") | .state][0] // "pending"')
+            echo "Vercel status for $GITHUB_SHA: $state"
+            if [ "$state" = "success" ]; then deployed=true; break; fi
+            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then exit 1; fi
+            sleep 5
+          done
+          if [ "$deployed" != "true" ]; then echo "Timed out verifying deployment of commit"; exit 1; fi
+      - name: Test the actual deployed Vercel website in Chromium
+        if: ${{ github.event_name == 'push' }}
+        env:
+          E2E_BASE_URL: https://beyondgravity-delta.vercel.app/
+        run: npx playwright test tests/documentary.spec.ts --project=desktop-chromium
       - if: always()
         uses: actions/upload-artifact@v4
         with:
