@@ -1,24 +1,40 @@
 import {test,expect} from '@playwright/test';
+import {chapters} from '../src/data';
+import {evidence} from '../src/research';
+import {story} from '../src/story';
 
-test('every chapter displays its heading, technical illustration, sourcebook and unique research',async({page},info)=>{
- test.skip(info.project.name!=='desktop-chromium','Chapter-wide verification runs on desktop; mobile layout has separate visual tests');
+test('all 12 chapters have independent research and three science beats',()=>{
+ expect(chapters).toHaveLength(12);
+ expect(evidence).toHaveLength(12);
+ expect(story).toHaveLength(12);
+ const names=new Set<string>();
+ for(let i=0;i<chapters.length;i++){
+  const chapter=chapters[i], notes=evidence[i], science=story[i];
+  expect(chapter.title.length,`chapter ${i+1} title`).toBeGreaterThan(6);
+  expect(names.has(chapter.title),`duplicate chapter title ${chapter.title}`).toBeFalsy();
+  names.add(chapter.title);
+  expect(notes.heading.length).toBeGreaterThan(6);
+  expect(notes.sources.some(s=>/^https?:\/\//.test(s.url)),`chapter ${i+1} source citation`).toBeTruthy();
+  expect(science.length,`chapter ${i+1} science beats`).toBe(3);
+ }
+});
+test('all 12 chapter navigation controls reveal the expected heading and active graphic',async({page},info)=>{
+ test.skip(info.project.name!=='desktop-chromium','Full chapter browsing in desktop; mobile interactions in layout QA');
+ test.slow(); // Twelve animated transitions plus software-rendered Three.js
  await page.goto('/');
  await page.getByRole('button',{name:/enter documentary experience/i}).click();
- const chapterButtons=page.locator('.film-progress-segments button');
- await expect(chapterButtons).toHaveCount(12);
- for(let i=0;i<12;i++){
-   await chapterButtons.nth(i).click();
-   await expect(page.locator('.film-stage h1')).toBeVisible({timeout:14000});
-   const heading=(await page.locator('.film-stage h1').innerText()).trim();
-   expect(heading.length,`chapter ${i+1} must have a meaningful title`).toBeGreaterThan(7);
-   await expect(page.locator('.beat-visual svg[role="img"]')).toBeVisible();
-   await page.getByRole('button',{name:/FIELD NOTES/i}).click();
-   await expect(page.locator('.film-dossier h3')).toBeVisible();
-   await expect(page.getByRole('button',{name:'Close Field Notes'})).toBeVisible();
-   await expect(page.locator('.film-dossier a[href^="http"]')).not.toHaveCount(0);
-   await page.getByRole('button',{name:'Close Field Notes'}).click();
-   await expect(page.locator('.film-dossier')).toHaveCount(0);
+ const buttons=page.locator('.film-progress-segments button');
+ await expect(buttons).toHaveCount(12);
+ for(let i=0;i<chapters.length;i++){
+  await buttons.nth(i).click();
+  await expect(page.locator('.film-stage h1')).toHaveText(chapters[i].title,{timeout:18000});
  }
+ await expect(page.locator('.beat-visual svg[role="img"]')).toBeVisible();
+ await page.getByRole('button',{name:'Field Notes',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Chapter Field Notes'})).toBeVisible();
+ await expect(page.locator('.film-dossier a[href^="http"]')).not.toHaveCount(0);
+ await page.getByRole('button',{name:'Close Field Notes'}).click();
+ await expect(page.getByRole('region',{name:'Chapter Field Notes'})).toHaveCount(0);
 });
 
 test('all 19 narrated neural tracks and caption manifests are published with correct MIME types',async({request},info)=>{

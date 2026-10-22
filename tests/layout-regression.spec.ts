@@ -4,7 +4,7 @@ test('Field Notes have a dedicated close target and do not trap chapter navigati
  await page.goto('/');
  await page.getByRole('button',{name:/enter documentary experience/i}).click();
  await page.getByRole('button',{name:/Go to chapter 2/i}).click();
- const notes=page.getByRole('button',{name:/FIELD NOTES/i});
+ const notes=page.getByRole('button',{name:'Field Notes',exact:true});
  await notes.click();
  const aside=page.getByRole('region',{name:'Chapter Field Notes'});
  await expect(aside).toBeVisible();
@@ -40,7 +40,7 @@ test('important captions and controls do not collide with playback or research v
   const btn=page.getByRole('button',{name:'Open animated science diagrams'});
   await expect(btn).toBeInViewport();
  }
- await page.getByRole('button',{name:/FIELD NOTES/i}).click();
+ await page.getByRole('button',{name:'Field Notes',exact:true}).click();
  await expect(captions).toHaveCount(0);
  await page.getByRole('button',{name:'Close Field Notes'}).click();
 });

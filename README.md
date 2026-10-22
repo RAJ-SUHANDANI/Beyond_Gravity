@@ -1,4 +1,9 @@
 # BEYOND GRAVITY
+
+### [▶ ENTER THE LIVE DOCUMENTARY — BEYOND GRAVITY ↗](https://beyondgravity-delta.vercel.app/)
+
+**Live website:** https://beyondgravity-delta.vercel.app/ · [GitHub source](https://github.com/RAJ-SUHANDANI/Beyond_Gravity) · [Performance audits](https://github.com/RAJ-SUHANDANI/Beyond_Gravity/actions/workflows/performance.yml)
+
 #### THE STUNT. THE SCIENCE. THE FUTURE.
 
 **An independent, cinematic, interactive documentary about the Tesla Roadster demonstrations and the extraordinary engineering required to move beyond the road.**
@@ -15,9 +20,9 @@
 ## What makes it different?
 
 ### 01 — Cinematic entry, not a website landing page
-The experience starts behind a near-black screen. A historical *publisher-hosted official Roadster unveil video* emerges through aperture masks, a lighting sweep, letterboxing and a hand-art-directed montage effect. Pointer movement adds subtle video-layer depth. A metallic, dimensional **Enter Experience** button completes the opening. It is **video**, not the site's 3D model.
+The experience starts behind a near-black screen. Tesla’s *publisher-hosted 2026 Roadster ramp-demonstration video* emerges through aperture masks, a lighting sweep, letterboxing and a hand-art-directed montage effect. Pointer movement adds subtle video-layer depth. A metallic, dimensional **Enter Experience** button completes the opening. It is **video**, not the site's 3D model.
 
-**Media honesty:** Tesla's official Roadster webpage features a 2017 Vimeo unveil. The entrance now uses Tesla’s official **October 2026** ramp demonstration, embedded from its YouTube channel. The authentic 2026 event is now playable in a separate, publisher-hosted YouTube theater with timestamp controls for the ramp, kickflip, design, aerodynamics and acceleration chapters. The independent 2017 intro film remains explicitly identified as archival. We neither redistribute Tesla film files nor pretend to own them.
+**Media honesty:** Tesla's official Roadster webpage features a 2017 Vimeo unveil. The entrance now uses Tesla’s official **October 2026** ramp demonstration, embedded from its YouTube channel. The authentic 2026 event is now playable in a separate, publisher-hosted YouTube theater with timestamp controls for the ramp, kickflip, design, aerodynamics and acceleration chapters. The separate 2017 unveiling film is identified as archival material in Chapter 02. We neither redistribute Tesla film files nor pretend to own them.
 
 ### 02 — A film that unlocks chapter by chapter
 A single animated stage replaces ordinary stacked content blocks. Each chapter is introduced by editorial typography, a kinetic reveal wipe, a live-moving 3D scene, ambient cinematic treatment and narrated explanation. **The first experience begins after Enter is clicked** (browsers commonly block audible autoplay without interaction). Subsequent narration can automatically advance the story when it concludes. Manual chapter seeking remains possible.
