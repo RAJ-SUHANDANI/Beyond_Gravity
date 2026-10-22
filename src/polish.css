@@ -69,3 +69,9 @@
  .science-theater .science-heading h2{font-size:clamp(30px,8.8vw,39px);overflow-wrap:anywhere}
  .science-theater .science-reading{min-width:0;width:100%;overflow-wrap:anywhere}
 }
+
+/* Caption safe area established from the 1440px Chromium film frame:
+   no horizontal contact with the independent engineering-diagram card. */
+@media(min-width:1060px){
+ .film-root .film-script{width:min(520px,36vw);left:49%;max-height:72px}
+}
