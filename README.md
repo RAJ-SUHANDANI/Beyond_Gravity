@@ -37,11 +37,17 @@ A hand-authored, procedural Three.js sports-car interpretation with a lofted scu
 - **Female**: short introductions, component explanations and interactive guidance.
 - Sound starts after the visitor's **Enter Experience** interaction, not after tapping a "hear story" button in every chapter.
 - The application prefers **pre-rendered local natural TTS audio** named `public/audio/male-00.mp3` through `male-11.mp3`, and `female-*.mp3`. It falls back to a browser-supplied voice if clips are absent; that system voice is **not guaranteed natural-sounding**.
-- To produce professional open-source recordings without paid cloud APIs: see [tools/render_narration.py](tools/render_narration.py) and [public/audio/README.md](public/audio/README.md). Use two voice reference samples you own/have permission to use. Run [Chatterbox](https://github.com/resemble-ai/chatterbox) locally and quality-check every clip.
+- To generate permissively licensed neural voices with no recording or paid key, use [tools/render_kokoro.py](tools/render_kokoro.py), based on the Apache-licensed [Kokoro 82M](https://huggingface.co/hexgrad/Kokoro-82M). The [voice-production workflow](.github/workflows/voices.yml) can render all 19 clips (12 male chapters, 6 female component explanations and female introduction). A separate [Chatterbox](https://github.com/resemble-ai/chatterbox) workflow remains available if you supply voice samples you are authorized to use.
 
-**Current limitation:** The repository provides the local TTS production pipeline, not bundled paid studio recordings. Generating and committing final natural neural speech files requires an authorized voice sample, local model weights, and a capable production machine. The website remains free to run.
+**Voice-quality disclosure:** Kokoro produces synthetic speech, not a human performance. If `public/audio/*.mp3` has not yet been generated and reviewed, the browser speech engine acts as a fallback. The renderer also writes `.vtt` subtitle cues using Kokoro's phoneme-timing output; the player prioritizes them whenever available. All published audio should be checked by ear for natural delivery, pronunciation and clipping.
 
 ---
+
+## Thirty-six deep-dive explanations
+
+Each of the twelve chapters now includes **three researched educational beats**, each with its own diagram, explanation and scientific takeaway. Visitors can open the **Science Theater** to investigate the drawings, move between conceptual stages, and read extended explanations. These diagrams are teaching reconstructions—not manufacturer-provided CAD, measured CFD outputs or airworthiness evidence.
+
+The documentary also includes an original **Web Audio soundscape** that reacts to chapters and automatically lowers its level under narration. The audio starts only after the viewer enters the experience and does not depend on proprietary music tracks or cloud services.
 
 ## Twelve chapters
 
@@ -101,7 +107,8 @@ Requires an installed FFmpeg, model weights and sufficient compute. These comman
 | Application | React 19, TypeScript, Vite |
 | Original WebGL car + physical teaching scenes | Three.js, React Three Fiber, Drei utilities |
 | Documentary transitions | Motion |
-| Animation experiments | CSS 3D, GSAP, Anime.js, React Spring |
+| Cinematic engineering drawings | Authored SVG, CSS motion and Motion |
+| Original atmospheric soundtrack | Web Audio synthesis with dialogue ducking |
 | Realistic local TTS production | Chatterbox; FFmpeg |
 | Offline-safe calculations | Built-in TypeScript physics formulas |
 | Sourcebook | Audited public references and independent explanations |
@@ -136,6 +143,10 @@ Read [SOURCES.md](SOURCES.md) before distributing this educational project.
 [Tesla Roadster](https://www.tesla.com/roadster) · [Reuters Roadster reveal](https://www.reuters.com/business/autos-transportation/tesla-set-unveil-next-generation-roadster-sports-ev-after-years-delay-2026-10-15/) · [WIRED technical explanation](https://www.wired.com/story/how-tesla-made-its-new-230-mph-car-fly) · [AP](https://apnews.com/article/7d5f19665435b7408025bfb7a2f2f0b7) · [NASA](https://www.nasa.gov/x-57-maxwell/) · [FAA](https://www.faa.gov/air-taxis)
 
 ---
+
+## Testing and release verification
+
+`npm run test` launches Playwright Chromium desktop and mobile suites after `npm run build`. Tests cover the entrance, storyboard explanation theater, navigation, physical labs, slider-free controls, and safe hit targets. GitHub Actions also checks the *actual Vercel deployment* after the Vercel status for that commit becomes successful. Rendered QA screenshots and browser traces are available via the build artifacts. Passing CI is not proof of perfect visuals or natural human-quality narration; manual listening and visual review remain essential.
 
 ## Project organization
 
