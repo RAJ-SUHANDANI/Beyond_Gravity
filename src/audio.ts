@@ -44,12 +44,29 @@ function preferredVoice(role:Role){
  return list.find(v=>/natural|neural|enhanced|premium/i.test(v.name))||list[role==='female'?Math.min(1,list.length-1):0]||null;
 }
 function asset(name:string){return import.meta.env.BASE_URL+'audio/'+name+'.mp3'}
+type TimedCaption={start:number;end:number;text:string};
+function parseVtt(input:string):TimedCaption[]{
+ const result:TimedCaption[]=[];
+ const timing=/^(\d{2}):(\d{2}):(\d{2})\.(\d{3})\s+-->\s+(\d{2}):(\d{2}):(\d{2})\.(\d{3})/;
+ const time=(a:string,b:string,c:string,d:string)=>Number(a)*3600+Number(b)*60+Number(c)+Number(d)/1000;
+ const lines=input.split(/\r?\n/);
+ for(let i=0;i<lines.length;i++){
+  const match=timing.exec(lines[i].trim());
+  if(!match)continue;
+  const start=time(match[1],match[2],match[3],match[4]);
+  const end=time(match[5],match[6],match[7],match[8]);
+  let text='';for(let j=i+1;j<lines.length&&lines[j].trim();j++)text+=(text?' ':'')+lines[j].trim();
+  if(text&&end>start)result.push({start,end,text});
+ }
+ return result;
+}
 function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,onCue?:CueHandler){
- stopNarration();const mine=serial;const cues=makeCues(script);
+ stopNarration();const mine=serial;const cues=makeCues(script);let timed:TimedCaption[]=[];let lastPhrase='';
  let prev=-1;
- const update=(index:number)=>{if(mine!==serial)return;index=Math.min(Math.max(index,0),cues.length-1);if(index===prev)return;prev=index;onCue?.(cues[index].text,index,cues.length)};
+ const update=(index:number)=>{if(mine!==serial)return;index=Math.min(Math.max(index,0),cues.length-1);if(index===prev)return;prev=index;lastPhrase=cues[index].text;onCue?.(lastPhrase,index,cues.length)};
  update(0);
  const audio=new Audio(src);audio.preload='auto';active=audio;
+ void fetch(src.replace(/\.mp3(?:\?.*)?$/i,'.vtt')).then(r=>r.ok?r.text():'').then(text=>{if(mine===serial&&text)timed=parseVtt(text)}).catch(()=>{});
  const done=(audible:boolean)=>{if(mine!==serial)return;active=null;onEnd?.(audible)};
  let fellBack=false;
  const fallback=()=>{if(fellBack||mine!==serial)return;fellBack=true;audio.pause();active=null;
@@ -67,7 +84,13 @@ function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,
  audio.onended=()=>{update(cues.length-1);done(audio.currentTime>2)};
  audio.onerror=fallback;
  audio.ontimeupdate=()=>{if(mine!==serial||!Number.isFinite(audio.duration)||!audio.duration)return;
-   // Approximates cue timestamps for rendered recordings without an aligned VTT.
+   if(timed.length){
+     let i=0;while(i<timed.length-1&&timed[i].end<audio.currentTime)i++;
+     const cue=timed[i];
+     if(lastPhrase!==cue.text){lastPhrase=cue.text;onCue?.(cue.text,i,timed.length)}
+     return;
+   }
+   // Fallback applies only when the audio has no accompanying timed VTT.
    const position=(audio.currentTime/audio.duration)*script.length;
    let i=0;while(i<cues.length-1&&cues[i].end<position)i++;update(i);
  };
