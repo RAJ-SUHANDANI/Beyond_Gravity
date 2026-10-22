@@ -15,6 +15,7 @@ test('mobile always has a reachable visual science diagram control',async({page}
  await page.goto('/');
  await page.getByRole('button',{name:/enter documentary experience/i}).click();
  await expect(page.locator('.film-root')).toBeVisible();
+ await expect(page.getByText('Made by Raj Suhandani')).toBeVisible();
  if(testInfo.project.name==='mobile-chromium'){
    const diagram=page.getByRole('button',{name:'Open animated science diagrams'});
    await expect(diagram).toBeVisible();
