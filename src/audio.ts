@@ -12,9 +12,12 @@ type Role='male'|'female';
 type Cue={text:string,start:number,end:number};
 type CueHandler=(text:string,index:number,count:number)=>void;
 let active:HTMLAudioElement|null=null;
+let narratorMuted=false;
+let fallbackUtterance:SpeechSynthesisUtterance|null=null;
+export function setNarrationMuted(value:boolean){narratorMuted=value;if(active)active.muted=value;if(fallbackUtterance)fallbackUtterance.volume=value?0:1;}
 let serial=0;
 let cancelFallback:undefined|(()=>void);
-export function stopNarration(){serial++;active?.pause();active=null;cancelFallback?.();cancelFallback=undefined;if(typeof window!=='undefined'&&'speechSynthesis'in window)window.speechSynthesis.cancel()}
+export function stopNarration(){serial++;active?.pause();active=null;cancelFallback?.();cancelFallback=undefined;fallbackUtterance=null;if(typeof window!=='undefined'&&'speechSynthesis'in window)window.speechSynthesis.cancel()}
 /** Pause and resume the actual recording position; chapter navigation remains a full stop. */
 export function pauseNarration():boolean{
  if(active && !active.paused){active.pause();return true}
@@ -85,13 +88,13 @@ function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,
  let prev=-1;
  const update=(index:number)=>{if(mine!==serial)return;index=Math.min(Math.max(index,0),cues.length-1);if(index===prev)return;prev=index;lastPhrase=cues[index].text;onCue?.(lastPhrase,index,cues.length)};
  update(0);
- const audio=new Audio(src);audio.preload='auto';active=audio;
+ const audio=new Audio(src);audio.preload='auto';audio.muted=narratorMuted;active=audio;
  void fetch(src.replace(/\.mp3(?:\?.*)?$/i,'.vtt')).then(r=>r.ok?r.text():'').then(text=>{if(mine===serial&&text)timed=parseVtt(text)}).catch(()=>{});
- const done=(audible:boolean)=>{if(mine!==serial)return;active=null;onEnd?.(audible)};
+ const done=(audible:boolean)=>{if(mine!==serial)return;active=null;fallbackUtterance=null;onEnd?.(audible)};
  let fellBack=false;
  const fallback=()=>{if(fellBack||mine!==serial)return;fellBack=true;audio.pause();active=null;
    if(!('speechSynthesis'in window)){done(false);return}
-   const synth=window.speechSynthesis;const sentence=new SpeechSynthesisUtterance(script);
+   const synth=window.speechSynthesis;const sentence=new SpeechSynthesisUtterance(script);fallbackUtterance=sentence;sentence.volume=narratorMuted?0:1;
    sentence.voice=preferredVoice(role);
    sentence.lang=sentence.voice?.lang||'en-US';
    sentence.rate=role==='male'?.96:1.02;

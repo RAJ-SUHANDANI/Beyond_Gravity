@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import {X,RotateCcw,Move3d,Info,Minus,Plus,ChevronRight,ExternalLink,ScanEye} from 'lucide-react';
 import {VehicleScene} from './Vehicle';
 import {parts,type PartId} from './data';
@@ -7,7 +7,33 @@ import {narratePart,stopNarration} from './audio';
 type Shared={onClose:()=>void;sim:SimState;setSim:React.Dispatch<React.SetStateAction<SimState>>;theme:'dark'|'light'};
 function Stepper({name,sim,setSim}:{name:SimKey;sim:SimState;setSim:React.Dispatch<React.SetStateAction<SimState>>}){const v=sim[name],b=bounds[name];const val=name==='efficiency'?Math.round(v*100)+'%':v.toLocaleString('en-US')+' '+b.unit;return <div className="control-stepper"><span className="stepper-label">{b.title}</span><div className="stepper-bar"><button aria-label={'Decrease '+b.title} disabled={v<=b.min} onClick={()=>setSim(s=>adjust(s,name,-1))}><Minus size={17}/></button><output>{val}</output><button aria-label={'Increase '+b.title} disabled={v>=b.max} onClick={()=>setSim(s=>adjust(s,name,1))}><Plus size={17}/></button></div><div className="stepper-limits"><small>{name==='efficiency'?'40%':b.min+' '+b.unit}</small><small>{name==='efficiency'?'85%':b.max+' '+b.unit}</small></div></div>}
 const sceneControls=['body','fans','vessel','thrusters','wheels','computer'] as PartId[];
-function LabShell({onClose,title,tag,children,theme}:{onClose:()=>void;title:string;tag:string;children:React.ReactNode;theme:'dark'|'light'}){return <div className={'overlay-screen lab-revamp '+(theme==='light'?'theme-light':'theme-dark')} role="dialog" aria-modal="true" aria-label={title}><header className="lab-header"><div className="lab-heading"><div className="eyebrow">{tag}</div><h2>{title}<span className="accent">.</span></h2><span className="lab-creator">Made by Raj Suhandani</span></div><button className="round-control" onClick={onClose} aria-label="Close laboratory"><X size={22}/></button></header>{children}</div>}
+function LabShell({onClose,title,tag,children,theme}:{onClose:()=>void;title:string;tag:string;children:React.ReactNode;theme:'dark'|'light'}){
+ const dialog=useRef<HTMLDivElement>(null);
+ const handleClose=useRef(onClose);handleClose.current=onClose;
+ useEffect(()=>{
+  const previous=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  const root=dialog.current;
+  root?.querySelector<HTMLButtonElement>('button[aria-label="Close laboratory"]')?.focus();
+  const keys=(event:KeyboardEvent)=>{
+   if(event.key==='Escape'){event.preventDefault();handleClose.current();return}
+   if(event.key!=='Tab'||!root)return;
+   const controls=Array.from(root.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el=>el.getClientRects().length>0);
+   if(!controls.length)return;
+   const first=controls[0],last=controls[controls.length-1];
+   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+  };
+  document.addEventListener('keydown',keys);
+  return()=>{document.removeEventListener('keydown',keys);previous?.focus()};
+ },[]);
+ return <div ref={dialog} className={'overlay-screen lab-revamp '+(theme==='light'?'theme-light':'theme-dark')} role="dialog" aria-modal="true" aria-label={title}>
+  <header className="lab-header">
+   <div className="lab-heading"><div className="eyebrow">{tag}</div><h2>{title}<span className="accent">.</span></h2><span className="lab-creator">Made by Raj Suhandani</span></div>
+   <button className="round-control" onClick={onClose} aria-label="Close laboratory"><X size={22}/></button>
+  </header>
+  {children}
+ </div>
+}
 export function ExploreLab({onClose,audioOn,sim,setSim,theme}:Shared&{audioOn:boolean}){const[part,setPart]=useState<PartId>('fans'),[exploded,setExploded]=useState(false);const[inspection,setInspection]=useState(true);const p=parts.find(x=>x.id===part)!;
  const focus=(id:PartId)=>{setPart(id);setInspection(true);setExploded(false);if(audioOn)narratePart(id)};
  useEffect(()=>()=>stopNarration(),[]);
