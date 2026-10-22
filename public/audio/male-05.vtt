@@ -1,0 +1,85 @@
+WEBVTT
+
+1
+00:00:00.166 --> 00:00:05.291
+No machine simply balances itself because its design looks symmetrical.
+
+2
+00:00:05.391 --> 00:00:11.781
+Accelerometers and gyroscopes report motion. Other sensors can estimate altitude and
+
+3
+00:00:11.831 --> 00:00:17.581
+position. Control software compares measurements with the intended trajectory and
+
+4
+00:00:17.631 --> 00:00:21.025
+commands actuators. Then it measures again.
+
+5
+00:00:21.421 --> 00:00:27.221
+This loop repeats continuously. The challenge is not only making corrections quickly.
+
+6
+00:00:27.506 --> 00:00:34.606
+It is making sure the system remains safe when a sensor, motor, or power supply fails.
+
+7
+00:00:34.881 --> 00:00:40.105
+An inertial measurement unit can report angular rates and specific acceleration.
+
+8
+00:00:40.516 --> 00:00:45.416
+Other sensors may estimate height, position and relative motion.
+
+9
+00:00:45.676 --> 00:00:49.176
+But every measurement contains noise and bias.
+
+10
+00:00:49.251 --> 00:00:54.501
+A flight controller must combine observations to estimate the state of the vehicle
+
+11
+00:00:54.626 --> 00:00:57.549
+rather than react blindly to one number.
+
+12
+00:00:57.891 --> 00:01:02.871
+Once the system estimates its state, a controller compares that estimate against the
+
+13
+00:01:02.921 --> 00:01:09.321
+desired orientation, speed or path. It computes actuator commands that reduce the
+
+14
+00:01:09.421 --> 00:01:15.956
+error. Control loops must account for response delay, available thrust, actuator
+
+15
+00:01:16.006 --> 00:01:18.250
+limits and coupling between axes.
+
+16
+00:01:18.770 --> 00:01:23.545
+Aggressive correction without stability analysis can create oscillation.
+
+17
+00:01:23.620 --> 00:01:28.470
+Engineering confidence requires more than a perfect test run.
+
+18
+00:01:28.570 --> 00:01:35.020
+Sensor failures, stuck actuators, power loss, gusts and uncertain landing conditions
+
+19
+00:01:35.095 --> 00:01:40.158
+must be considered. The aircraft also needs defined safe responses.
+
+20
+00:01:40.682 --> 00:01:46.832
+The details of Tesla’s unpublished control computer remain unknown; our model
+
+21
+00:01:46.932 --> 00:01:49.896
+illustrates general flight-control principles.

@@ -1,0 +1,89 @@
+WEBVTT
+
+1
+00:00:00.112 --> 00:00:03.712
+The first successful flight never starts in the sky.
+
+2
+00:00:03.762 --> 00:00:09.312
+It starts with requirements, drawings, equations and failure analysis.
+
+3
+00:00:09.387 --> 00:00:13.637
+Engineers validate individual parts before integrating them.
+
+4
+00:00:13.762 --> 00:00:19.584
+Simulations reveal problems that prototypes might make expensive—or dangerous.
+
+5
+00:00:20.011 --> 00:00:24.236
+Testing grows carefully from small and controlled conditions.
+
+6
+00:00:24.336 --> 00:00:30.661
+Documentation, independent review and certification are not bureaucratic extras.
+
+7
+00:00:30.736 --> 00:00:34.886
+They are part of engineering a machine that must remain safe.
+
+8
+00:00:34.961 --> 00:00:40.486
+Before building hardware, engineers define what the vehicle must do and what it must
+
+9
+00:00:40.561 --> 00:00:41.407
+never do.
+
+10
+00:00:41.749 --> 00:00:48.134
+Requirements cover weight, performance, safe operating limits, expected environments
+
+11
+00:00:48.184 --> 00:00:53.659
+and fault cases. They establish the conditions against which any proposed design can
+
+12
+00:00:53.709 --> 00:00:59.912
+be judged. An extraordinary video is not a substitute for testable requirements.
+
+13
+00:01:00.323 --> 00:01:05.733
+Computational models, bench tests and component experiments help eliminate some
+
+14
+00:01:05.858 --> 00:01:09.383
+failure modes before a vehicle carries people.
+
+15
+00:01:09.483 --> 00:01:15.165
+Airflow, structure, thermal loads and attitude control can be studied separately.
+
+16
+00:01:15.458 --> 00:01:20.983
+The resulting models are imperfect, so prototype measurements must validate or correct
+
+17
+00:01:21.033 --> 00:01:26.618
+them. Testing should grow from simple, constrained conditions toward more demanding
+
+18
+00:01:26.668 --> 00:01:33.618
+maneuvers. Each step adds evidence about stability, energy, reliability and failure
+
+19
+00:01:33.668 --> 00:01:34.470
+response.
+
+20
+00:01:34.994 --> 00:01:39.394
+Documented test results matter more than visual spectacle.
+
+21
+00:01:39.469 --> 00:01:45.044
+For public operation, aviation authorities may require specific approvals and
+
+22
+00:01:45.119 --> 00:01:47.653
+certification appropriate to the vehicle.

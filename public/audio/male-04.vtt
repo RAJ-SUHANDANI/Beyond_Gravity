@@ -1,0 +1,93 @@
+WEBVTT
+
+1
+00:00:00.201 --> 00:00:05.926
+Gravity is always present. To hover, upward force must at least balance the vehicle’s
+
+2
+00:00:06.001 --> 00:00:09.536
+weight. To climb, force must exceed it.
+
+3
+00:00:09.786 --> 00:00:12.661
+But acceleration alone is not enough.
+
+4
+00:00:12.736 --> 00:00:15.314
+A vehicle must also remain stable.
+
+5
+00:00:15.738 --> 00:00:20.938
+A nozzle mounted away from the center of mass can spin the machine even when the total
+
+6
+00:00:21.038 --> 00:00:28.113
+force looks manageable. Flight is a continuous negotiation between forces, moments,
+
+7
+00:00:28.188 --> 00:00:29.910
+energy, and control.
+
+8
+00:00:30.220 --> 00:00:35.845
+Near Earth, the gravitational force on a vehicle is its mass multiplied by roughly
+
+9
+00:00:35.945 --> 00:00:39.420
+nine point eight one meters per second squared.
+
+10
+00:00:39.520 --> 00:00:44.795
+A thousand-kilogram aircraft weighs about nine point eight kilonewtons.
+
+11
+00:00:44.870 --> 00:00:50.793
+To hold altitude without vertical acceleration, upward force must balance that weight.
+
+12
+00:00:51.267 --> 00:00:54.857
+To climb, extra net upward force is required.
+
+13
+00:00:54.982 --> 00:01:00.137
+Force changes linear momentum. Torque changes angular momentum.
+
+14
+00:01:00.422 --> 00:01:03.472
+A flying machine needs to control both.
+
+15
+00:01:03.547 --> 00:01:06.147
+Pitch tips the nose up or down.
+
+16
+00:01:06.247 --> 00:01:09.334
+Roll banks the vehicle. Yaw changes heading.
+
+17
+00:01:09.781 --> 00:01:14.631
+An uncontrolled pitch moment could destabilize the aircraft even if its average upward
+
+18
+00:01:14.706 --> 00:01:21.306
+thrust matches its weight. A rotor generates thrust by accelerating a large mass of
+
+19
+00:01:21.356 --> 00:01:27.856
+air downward. Ideal momentum theory tells us that the power for hover increases faster
+
+20
+00:01:27.981 --> 00:01:30.487
+than linearly with the needed thrust.
+
+21
+00:01:31.081 --> 00:01:36.656
+Increasing effective rotor disk area reduces ideal induced power.
+
+22
+00:01:36.781 --> 00:01:42.556
+Real rotor drag, efficiency, structure and flight conditions make actual power
+
+23
+00:01:42.606 --> 00:01:43.957
+requirements higher.

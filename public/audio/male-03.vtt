@@ -1,0 +1,89 @@
+WEBVTT
+
+1
+00:00:00.141 --> 00:00:06.216
+Newton’s third law is brutally simple: to every action, there is an equal and opposite
+
+2
+00:00:06.266 --> 00:00:11.341
+reaction. A cold-gas thruster releases pressurized gas through a nozzle.
+
+3
+00:00:11.416 --> 00:00:18.076
+As the gas accelerates outward, the vehicle experiences a force in the opposite
+
+4
+00:00:18.126 --> 00:00:18.734
+direction.
+
+5
+00:00:19.259 --> 00:00:25.099
+Arrange multiple nozzles at different positions, and forces can also create torque,
+
+6
+00:00:25.174 --> 00:00:31.894
+changing pitch, roll, or yaw. But the supply of compressed gas is finite.
+
+7
+00:00:31.994 --> 00:00:36.294
+Powerful bursts are not the same as unlimited endurance.
+
+8
+00:00:36.394 --> 00:00:40.769
+A cold-gas thruster releases pressurized gas through a nozzle.
+
+9
+00:00:41.186 --> 00:00:46.811
+The escaping gas carries momentum, so the remaining vehicle experiences a reaction
+
+10
+00:00:46.886 --> 00:00:53.461
+force. A simple approximation for momentum thrust is mass flow rate times exhaust
+
+11
+00:00:53.536 --> 00:00:58.611
+speed; a fuller model includes pressure across the exit area.
+
+12
+00:00:58.686 --> 00:01:01.365
+The gas need not burn to push the vehicle.
+
+13
+00:01:01.777 --> 00:01:05.727
+A force through the center of mass changes translation.
+
+14
+00:01:05.932 --> 00:01:10.882
+The same force applied at a distance can also rotate the vehicle.
+
+15
+00:01:10.982 --> 00:01:16.169
+Carefully distributed thrusters may generate pitch, roll and yaw moments.
+
+16
+00:01:16.580 --> 00:01:22.945
+That introduces real control complexity, because translation and rotation can interact
+
+17
+00:01:22.995 --> 00:01:27.170
+while the center of mass and vehicle orientation are changing.
+
+18
+00:01:27.270 --> 00:01:33.595
+Gas tanks must store sufficient mass at safe pressure, survive structural loads and
+
+19
+00:01:33.695 --> 00:01:37.863
+fit inside a vehicle already carrying batteries and passengers.
+
+20
+00:01:38.478 --> 00:01:44.653
+Each maneuver consumes propellant. Unlike a continuously energized rotor system,
+
+21
+00:01:44.763 --> 00:01:50.188
+stored gas provides finite reaction mass, and replenishment matters.
+
+22
+00:01:50.263 --> 00:01:54.884
+An airborne stunt therefore says little about everyday flight endurance.

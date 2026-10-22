@@ -1,0 +1,85 @@
+WEBVTT
+
+1
+00:00:00.112 --> 00:00:04.462
+The phrase flying car describes several very different machines.
+
+2
+00:00:04.537 --> 00:00:07.712
+One uses short bursts of stored gas.
+
+3
+00:00:07.812 --> 00:00:10.037
+Another uses spinning rotors to lift vertically.
+
+4
+00:00:10.137 --> 00:00:14.037
+A third deploys wings and flies like an airplane.
+
+5
+00:00:14.137 --> 00:00:18.667
+A fourth separates the road vehicle from the aircraft.
+
+6
+00:00:19.144 --> 00:00:25.344
+Each changes the trade between efficiency, complexity, runway access and mechanical
+
+7
+00:00:25.419 --> 00:00:31.569
+weight. The winner is not decided by appearance—it is determined by the mission.
+
+8
+00:00:31.669 --> 00:00:37.369
+A short-burst propulsion system can produce dramatic motion without large exposed
+
+9
+00:00:37.419 --> 00:00:38.271
+propellers.
+
+10
+00:00:38.689 --> 00:00:44.589
+But reaction mass is finite, and the craft must manage launch and landing loads.
+
+11
+00:00:44.664 --> 00:00:49.439
+That architecture is different from an aircraft that continuously balances its weight
+
+12
+00:00:49.489 --> 00:00:56.364
+with aerodynamic or rotor lift. Multicopters create vertical lift at low speed with
+
+13
+00:00:56.439 --> 00:00:57.063
+rotors.
+
+14
+00:00:57.729 --> 00:01:03.119
+Wings create lift more efficiently when moving through air, but a winged roadable
+
+15
+00:01:03.194 --> 00:01:06.444
+vehicle needs a way to take off and land.
+
+16
+00:01:06.519 --> 00:01:12.269
+Combining a road car with useful aircraft geometry inevitably adds weight,
+
+17
+00:01:12.344 --> 00:01:16.611
+transformation mechanisms or operational compromises.
+
+18
+00:01:17.125 --> 00:01:21.575
+A modular design could keep some ground-vehicle functions separate from flight
+
+19
+00:01:21.625 --> 00:01:27.825
+hardware. This may simplify certain tradeoffs while creating new connection, weight,
+
+20
+00:01:27.900 --> 00:01:33.371
+logistics and safety challenges. There is no guaranteed winning architecture.
+
+21
+00:01:33.760 --> 00:01:38.878
+The useful question is what mission a real vehicle can safely accomplish.

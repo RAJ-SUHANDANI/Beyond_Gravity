@@ -1,0 +1,89 @@
+WEBVTT
+
+1
+00:00:00.184 --> 00:00:02.859
+Now it is your turn to investigate.
+
+2
+00:00:02.934 --> 00:00:06.634
+Increase mass and required hover thrust rises.
+
+3
+00:00:06.859 --> 00:00:12.059
+Reduce rotor area and the ideal power requirement rises too.
+
+4
+00:00:12.159 --> 00:00:16.321
+Change efficiency and the electrical energy estimate changes.
+
+5
+00:00:16.655 --> 00:00:23.455
+These numbers are a simplified scientific model, not a blueprint for a human-carrying
+
+6
+00:00:23.530 --> 00:00:27.580
+aircraft. The goal is understanding which trade-offs govern flight.
+
+7
+00:00:27.655 --> 00:00:32.555
+The lab uses a simplified hypothetical rotor-powered aircraft.
+
+8
+00:00:32.630 --> 00:00:35.931
+It is not a prediction of Tesla Roadster performance.
+
+9
+00:00:36.390 --> 00:00:41.890
+Choose mass, combined effective rotor area and an efficiency assumption.
+
+10
+00:00:42.185 --> 00:00:48.110
+The model first finds the force needed to support weight, then estimates ideal induced
+
+11
+00:00:48.185 --> 00:00:51.051
+hover power at sea-level air density.
+
+12
+00:00:51.475 --> 00:00:58.675
+In the ideal model, increasing effective rotor area reduces how rapidly air must be
+
+13
+00:00:58.725 --> 00:01:00.950
+accelerated to produce a given thrust.
+
+14
+00:01:01.025 --> 00:01:06.965
+That tends to lower induced power, although larger rotors can create packaging,
+
+15
+00:01:07.065 --> 00:01:09.233
+structural and noise challenges.
+
+16
+00:01:09.715 --> 00:01:15.065
+You can observe the calculated power and the conceptual 3D rotor size updating
+
+17
+00:01:15.165 --> 00:01:22.865
+together. Efficiency assumptions affect estimated electrical demand but do not replace
+
+18
+00:01:22.965 --> 00:01:25.300
+rotor aerodynamic analysis.
+
+19
+00:01:25.775 --> 00:01:32.700
+We do not simulate turbulent rotor interference, gust rejection, high-altitude
+
+20
+00:01:32.860 --> 00:01:36.235
+operation, motor thermal limits or battery reserves.
+
+21
+00:01:36.310 --> 00:01:41.910
+The purpose is to ask better engineering questions, not to create flight-worthy design
+
+22
+00:01:41.960 --> 00:01:42.882
+instructions.
