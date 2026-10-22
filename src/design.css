@@ -295,3 +295,6 @@ body{background:var(--bg);color:var(--ink)}
 @media(max-width:750px){.chapter-visuals{right:2.5vw;bottom:140px;width:155px;opacity:.91}.chapter-visuals .visual-scene{padding:9px}.chapter-visuals .visual-header{font-size:7px}.chapter-visuals button{padding:7px;font-size:7px}.chapter-visuals strong{font-size:11px}.chapter-visuals p{font-size:9px}.chapter-visuals small{font-size:7px}.film-root .film-stage-content{max-width:calc(100% - 17px)}}
 @media(max-width:480px){.chapter-visuals{display:none}.film-root .scene-fixed{opacity:.56}.film-root .film-stage-content{z-index:9}}
 @media(prefers-reduced-motion:reduce){.scan-line,.viz-force-vectors i,.viz-nozzle-jet,.viz-power-bars i{animation:none}}
+
+/* Creator signature is in normal layout flow, never floats over interactive presets or data. */
+.overlay-screen.lab-revamp .lab-creator{position:static;display:block;align-self:flex-end;flex-shrink:0;margin:12px 22px 12px auto;pointer-events:none;background:transparent;padding:0;color:#a6bac2}
