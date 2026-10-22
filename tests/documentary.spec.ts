@@ -8,6 +8,7 @@ test('enter documentary, navigate chapters and open science theater',async({page
  await page.goto('/');
  await page.getByRole('button',{name:/enter documentary experience/i}).click();
  await expect(page.locator('.film-root')).toBeVisible();
+ await page.waitForTimeout(1200);
  await expect(page.getByRole('heading',{name:/THE IMPOSSIBLE MOMENT/i})).toBeVisible();
  await page.getByRole('button',{name:/DECODE THE SCIENCE/i}).click();
  await expect(page.getByRole('dialog',{name:/Technical documentary/i})).toBeVisible();
@@ -19,6 +20,7 @@ test('enter documentary, navigate chapters and open science theater',async({page
 test('physics laboratory can change a parameter without a slider',async({page})=>{
  await page.goto('/');
  await page.getByRole('button',{name:/enter documentary experience/i}).click();
+ await page.waitForTimeout(1200);
  await page.getByRole('button',{name:/Go to chapter 11/i}).click();
  await expect(page.getByRole('heading',{name:/MAKE PHYSICS VISIBLE/i})).toBeVisible();
  await page.getByRole('button',{name:/OPEN SIMULATOR/i}).click();
@@ -35,6 +37,7 @@ test('buttons stay within viewport when shown, including reduced-motion mode',as
  const enter=page.getByRole('button',{name:/enter documentary experience/i});
  await expect(enter).toBeVisible();
  await enter.click();
+ await page.waitForTimeout(1200);
  const action=page.getByRole('button',{name:/DECODE THE SCIENCE/i});
  await action.scrollIntoViewIfNeeded();
  await expect(action).toBeInViewport();

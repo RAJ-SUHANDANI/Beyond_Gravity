@@ -44,27 +44,27 @@ function preferredVoice(role:Role){
  return list.find(v=>/natural|neural|enhanced|premium/i.test(v.name))||list[role==='female'?Math.min(1,list.length-1):0]||null;
 }
 function asset(name:string){return import.meta.env.BASE_URL+'audio/'+name+'.mp3'}
-function play(script:string,role:Role,src:string,onEnd?:()=>void,onCue?:CueHandler){
+function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,onCue?:CueHandler){
  stopNarration();const mine=serial;const cues=makeCues(script);
  let prev=-1;
  const update=(index:number)=>{if(mine!==serial)return;index=Math.min(Math.max(index,0),cues.length-1);if(index===prev)return;prev=index;onCue?.(cues[index].text,index,cues.length)};
  update(0);
  const audio=new Audio(src);audio.preload='auto';active=audio;
- const done=()=>{if(mine!==serial)return;active=null;onEnd?.()};
+ const done=(audible:boolean)=>{if(mine!==serial)return;active=null;onEnd?.(audible)};
  let fellBack=false;
  const fallback=()=>{if(fellBack||mine!==serial)return;fellBack=true;audio.pause();active=null;
-   if(!('speechSynthesis'in window)){done();return}
+   if(!('speechSynthesis'in window)){done(false);return}
    const synth=window.speechSynthesis;const sentence=new SpeechSynthesisUtterance(script);
    sentence.voice=preferredVoice(role);
    sentence.lang=sentence.voice?.lang||'en-US';
    sentence.rate=role==='male'?.96:1.02;
    sentence.pitch=1;
    sentence.onboundary=e=>{if(mine!==serial)return;const charIndex=e.charIndex;let i=0;while(i<cues.length-1&&cues[i].end<=charIndex)i++;update(i)};
-   sentence.onend=done;sentence.onerror=done;
+   const started=performance.now();sentence.onend=()=>done(performance.now()-started>Math.max(1500,script.length*15));sentence.onerror=()=>done(false);
    synth.cancel();synth.speak(sentence);
    cancelFallback=()=>{sentence.onend=null;sentence.onerror=null;synth.cancel()};
  };
- audio.onended=()=>{update(cues.length-1);done()};
+ audio.onended=()=>{update(cues.length-1);done(audio.currentTime>2)};
  audio.onerror=fallback;
  audio.ontimeupdate=()=>{if(mine!==serial||!Number.isFinite(audio.duration)||!audio.duration)return;
    // Approximates cue timestamps for rendered recordings without an aligned VTT.
@@ -74,6 +74,6 @@ function play(script:string,role:Role,src:string,onEnd?:()=>void,onCue?:CueHandl
  void audio.play().catch(fallback);
  return ()=>{if(mine===serial)stopNarration()};
 }
-export function narrateChapter(i:number,onEnd?:()=>void,onCue?:CueHandler){const original=chapters[i]?.narration;const text=original?fullNarration(i,original):undefined;if(!text){onEnd?.();return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
+export function narrateChapter(i:number,onEnd?:()=>void,onCue?:CueHandler){const original=chapters[i]?.narration;const text=original?fullNarration(i,original):undefined;if(!text){onEnd?.(false);return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
 export function narratePart(id:PartId,onEnd?:()=>void,onCue?:CueHandler){const p=parts.find(x=>x.id===id);if(!p)return;return play(p.female,'female',asset('female-'+id),onEnd,onCue)}
 export function narrateIntro(onEnd?:()=>void,onCue?:CueHandler){return play('Beyond Gravity. A documentary you can step inside. The stunt. The science. The future.','female',asset('female-intro'),onEnd,onCue)}
