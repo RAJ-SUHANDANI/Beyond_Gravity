@@ -246,3 +246,20 @@
  .cinema-intro .intro-cinematic-bars:before,
  .cinema-intro .intro-cinematic-bars:after{animation:none!important;transform:none!important}
 }
+
+/* The dramatic desktop title is intentionally oversized, but all glyphs
+   must stay inside the actual cinematic aperture at 1366–2560px widths. */
+@media(min-width:851px){
+ .cinema-intro .intro-middle{left:7.5%;right:7.5%;width:85%}
+ .cinema-intro .intro-title{
+   font-size:clamp(66px,min(9.5vw,13.2vh),178px);
+   line-height:1;
+   letter-spacing:-.095em;
+   max-width:100%;
+ }
+ .cinema-intro .intro-heading-mask{overflow:visible}
+}
+@media(min-width:851px) and (max-height:680px){
+ .cinema-intro .intro-middle{top:36%}
+ .cinema-intro .intro-title{font-size:clamp(64px,11.8vh,110px)}
+}

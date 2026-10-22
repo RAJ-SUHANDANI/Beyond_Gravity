@@ -44,3 +44,18 @@ test('important captions and controls do not collide with playback or research v
  await expect(captions).toHaveCount(0);
  await page.getByRole('button',{name:'Close Field Notes'}).click();
 });
+
+test('cinematic opening title fits inside the viewport without clipping',async({page})=>{
+ await page.goto('/');
+ const title=page.getByRole('heading',{name:/BEYOND GRAVITY/i});
+ await expect(title).toBeVisible();
+ const metrics=await title.evaluate(element=>{
+  const rect=element.getBoundingClientRect();
+  const mask=element.closest('.intro-heading-mask');
+  const bounds=mask?.getBoundingClientRect();
+  return {scroll:element.scrollWidth,client:element.clientWidth,x:rect.x,edge:rect.right,width:window.innerWidth,maskRight:bounds?.right??0};
+ });
+ expect(metrics.scroll,'all headline characters must fit inside its text box').toBeLessThanOrEqual(metrics.client+6);
+ expect(metrics.edge,'title box must remain within viewport').toBeLessThanOrEqual(metrics.width+1);
+ expect(metrics.maskRight,'title mask must remain within viewport').toBeLessThanOrEqual(metrics.width+1);
+});
