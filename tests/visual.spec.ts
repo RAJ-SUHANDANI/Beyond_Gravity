@@ -13,7 +13,11 @@ test('director cut: screenshot and safe hit targets at desktop or mobile dimensi
  expect(rect,'chapter action must be measurable').not.toBeNull();
  expect(controls,'player must be measurable').not.toBeNull();
  if(rect&&controls)expect(rect.y+rect.height).toBeLessThan(controls.y+3);
- await page.screenshot({path:'docs/qa/'+testInfo.project.name+'-documentary.png',animations:'disabled'});
+ if(testInfo.project.name==='mobile-chromium'){
+   await page.locator('.film-stage-content').screenshot({path:'docs/qa/'+testInfo.project.name+'-documentary.png',animations:'disabled',timeout:15000});
+ }else{
+   await page.screenshot({path:'docs/qa/'+testInfo.project.name+'-documentary.png',animations:'disabled',timeout:20000});
+ }
  await action.click();
  await expect(page.getByRole('dialog',{name:/Technical documentary/i})).toBeVisible();
  await page.screenshot({path:'docs/qa/'+testInfo.project.name+'-science-theater.png',animations:'disabled'});
