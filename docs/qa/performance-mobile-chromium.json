@@ -1,0 +1,19 @@
+{
+  "commit": "589a54745c1b7eb34c1459dcb53447dc94b83cad",
+  "viewport": "mobile-chromium",
+  "observations": {
+    "averageFps": 1.4,
+    "p95FrameMs": 3049.8,
+    "medianFrameMs": 516.6,
+    "observedFrames": 8,
+    "domContentLoadedMs": 80,
+    "trackedResourceCount": 6,
+    "transferBytesReported": 475287
+  },
+  "intro": {
+    "duration": 127,
+    "domContentLoaded": 80,
+    "responseEnd": 11
+  },
+  "limitations": "Chromium CI synthetic; not a physical device benchmark or Lighthouse Core Web Vitals."
+}
