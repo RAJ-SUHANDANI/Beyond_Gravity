@@ -13,6 +13,8 @@ type Cue={text:string,start:number,end:number};
 type CueHandler=(text:string,index:number,count:number)=>void;
 let active:HTMLAudioElement|null=null;
 let narratorMuted=false;
+let narratorRate=1;
+export function setNarrationPlaybackRate(next:number){narratorRate=Math.min(1.5,Math.max(.75,next));if(active)active.playbackRate=narratorRate;if(fallbackUtterance)fallbackUtterance.rate=narratorRate;}
 let fallbackUtterance:SpeechSynthesisUtterance|null=null;
 export function setNarrationMuted(value:boolean){narratorMuted=value;if(active)active.muted=value;if(fallbackUtterance)fallbackUtterance.volume=value?0:1;}
 let serial=0;
@@ -88,7 +90,7 @@ function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,
  let prev=-1;
  const update=(index:number)=>{if(mine!==serial)return;index=Math.min(Math.max(index,0),cues.length-1);if(index===prev)return;prev=index;lastPhrase=cues[index].text;onCue?.(lastPhrase,index,cues.length)};
  update(0);
- const audio=new Audio(src);audio.preload='auto';audio.muted=narratorMuted;active=audio;
+ const audio=new Audio(src);audio.preload='auto';audio.muted=narratorMuted;audio.playbackRate=narratorRate;active=audio;
  void fetch(src.replace(/\.mp3(?:\?.*)?$/i,'.vtt')).then(r=>r.ok?r.text():'').then(text=>{if(mine===serial&&text)timed=parseVtt(text)}).catch(()=>{});
  const done=(audible:boolean)=>{if(mine!==serial)return;active=null;fallbackUtterance=null;onEnd?.(audible)};
  let fellBack=false;
@@ -97,7 +99,7 @@ function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,
    const synth=window.speechSynthesis;const sentence=new SpeechSynthesisUtterance(script);fallbackUtterance=sentence;sentence.volume=narratorMuted?0:1;
    sentence.voice=preferredVoice(role);
    sentence.lang=sentence.voice?.lang||'en-US';
-   sentence.rate=role==='male'?.96:1.02;
+   sentence.rate=(role==='male'?.96:1.02)*narratorRate;
    sentence.pitch=1;
    sentence.onboundary=e=>{if(mine!==serial)return;const charIndex=e.charIndex;let i=0;while(i<cues.length-1&&cues[i].end<=charIndex)i++;update(i)};
    const started=performance.now();sentence.onend=()=>done(performance.now()-started>Math.max(1500,script.length*15));sentence.onerror=()=>done(false);

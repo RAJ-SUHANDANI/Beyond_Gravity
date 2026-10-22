@@ -166,3 +166,7 @@
 .event-rights-note{font:11px/1.75 'DM Mono',monospace;letter-spacing:0!important;color:#99b6bc!important;max-width:950px}
 .event-source-link{display:inline-flex;align-items:center;gap:7px;color:#baf9e9;font:10px 'DM Mono',monospace;text-decoration:underline;text-underline-offset:4px;padding:10px 0}
 @media(max-width:620px){.event-segments{display:grid;grid-template-columns:1fr 1fr}.event-segments button{min-width:0;font-size:9px}.film-official-video{min-height:175px}.film-video-proof .proof-inner{width:100%;max-height:96dvh;padding:10px!important}}
+
+/* Accessible narrator speed switch; no additional footer controls to crowd captions. */
+.film-root .film-speed-control{min-width:53px;font:11px 'DM Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:0;padding-inline:12px}
+@media(max-width:580px){.film-root .film-speed-control{min-width:40px;padding-inline:7px;font-size:10px}}

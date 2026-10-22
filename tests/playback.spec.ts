@@ -91,3 +91,18 @@ test('official video closes with Escape and returns keyboard focus',async({page}
  await expect(dialog).not.toBeVisible();
  await expect(open).toBeFocused();
 });
+
+test('documentary playback rate cycles through accessible speeds',async({page})=>{
+ await page.goto('/');
+ await page.getByRole('button',{name:/enter documentary experience/i}).click();
+ const speed=page.getByRole('button',{name:'Change narration playback speed'});
+ await expect(speed).toHaveText('1×');
+ await speed.click();
+ await expect(speed).toHaveText('1.25×');
+ await speed.click();
+ await expect(speed).toHaveText('1.5×');
+ await speed.click();
+ await expect(speed).toHaveText('0.75×');
+ await speed.click();
+ await expect(speed).toHaveText('1×');
+});
