@@ -42,3 +42,30 @@
 @media (prefers-reduced-motion:reduce) {
  .film-root:before,.film-reveal-curtain,.film-reveal-line{animation:none!important}
 }
+
+/* Visual QA 2026-10-22: keep the attribution in document flow, never atop controls. */
+.lab-revamp .lab-header{height:auto;min-height:118px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.lab-revamp .lab-heading{min-width:0;max-width:calc(100% - 65px)}
+.lab-revamp .lab-heading h2{line-height:1.04}
+.lab-revamp .lab-creator{
+ position:static!important;display:block!important;margin:7px 0 0;
+ bottom:auto!important;right:auto!important;top:auto!important;
+ background:transparent!important;padding:0!important;
+ font:9px 'DM Mono',monospace!important;letter-spacing:.055em;
+ color:#b1c8ca!important;
+}
+/* Geometry diagrams must fit the available mobile width; no horizontal crop. */
+.science-theater,.science-theater *{box-sizing:border-box}
+.science-theater .science-main{min-width:0;max-width:100%}
+.science-theater .science-stage{min-width:0;max-width:100%}
+.science-theater .science-graphic{display:block;width:100%;height:100%;max-width:100%}
+@media(max-width:570px){
+ .lab-revamp .lab-header{min-height:112px;padding-top:18px;padding-bottom:18px}
+ .lab-revamp .lab-heading h2{font-size:clamp(29px,8vw,40px)}
+ .lab-revamp .lab-creator{font-size:8px!important}
+ .science-theater .science-main{width:100%;padding-left:14px;padding-right:14px}
+ .science-theater .science-stage{width:100%;flex:0 0 auto;aspect-ratio:1.8;overflow:hidden}
+ .science-theater .science-equation{max-width:74%;font-size:9px;padding:7px 9px;overflow-wrap:break-word}
+ .science-theater .science-heading h2{font-size:clamp(30px,8.8vw,39px);overflow-wrap:anywhere}
+ .science-theater .science-reading{min-width:0;width:100%;overflow-wrap:anywhere}
+}

@@ -51,7 +51,7 @@ export function Car({focus='body',exploded=false,interactive=false,onSelect,sim,
 }
 function CameraRig({chapter}:{chapter:number}){useFrame(({camera},dt)=>{const phase=chapter%4;const x=[4.8,-4.2,5.2,4.6][phase],y=[1.8,2.5,-1.0,3.1][phase],z=[7.8,8.0,7.5,7.7][phase];camera.position.set(THREE.MathUtils.damp(camera.position.x,x,1.5,dt),THREE.MathUtils.damp(camera.position.y,y,1.5,dt),THREE.MathUtils.damp(camera.position.z,z,1.5,dt));camera.lookAt(0,0,0)});return null}
 function CinematicReflections(){const{gl,scene}=useThree();useEffect(()=>{const pmrem=new THREE.PMREMGenerator(gl);const room=new RoomEnvironment();const env=pmrem.fromScene(room,.035);const old=scene.environment;scene.environment=env.texture;scene.environmentIntensity=1.15;return()=>{scene.environment=old;env.texture.dispose();room.dispose();pmrem.dispose()};},[gl,scene]);return null}
-function Studio(){return <group><mesh rotation={[-Math.PI/2,0,0]} position={[0,-1.02,0]} receiveShadow><planeGeometry args={[120,120]}/><meshStandardMaterial color="#070c13" roughness={.45} metalness={.43}/></mesh>{[-1,1].map(s=><mesh key={s} position={[s*5,3.1,-4]} rotation={[0,s*.29,0]}><planeGeometry args={[.06,7.8]}/><meshBasicMaterial color="#a6f6e6" transparent opacity={.28}/></mesh>)}<gridHelper args={[23,16,'#183a44','#11212a']} position={[0,-1.006,0]}/></group>}
+function Studio(){return <group><mesh rotation={[-Math.PI/2,0,0]} position={[0,-1.02,0]} receiveShadow><planeGeometry args={[120,120]}/><meshBasicMaterial color="#08131c"/></mesh>{[-1,1].map(s=><mesh key={s} position={[s*5,3.1,-4]} rotation={[0,s*.29,0]}><planeGeometry args={[.06,7.8]}/><meshBasicMaterial color="#a6f6e6" transparent opacity={.28}/></mesh>)}<gridHelper args={[23,16,'#183a44','#11212a']} position={[0,-1.006,0]}/></group>}
 function FocusPart({part,sim}:{part:PartId;sim?:SimState}){const g=useRef<Group>(null);const body=useMemo(()=>loft(longitudinal),[]);const canopy=useMemo(()=>loft([[-1.42,.34,.46,.08],[-1.13,.46,.71,.23],[-.85,.55,.83,.26],[-.18,.60,.86,.27],[.58,.60,.79,.23],[1.12,.46,.61,.1]]),[]);
 useFrame((st,dt)=>{if(g.current){g.current.position.x=THREE.MathUtils.damp(g.current.position.x,1.25,3,dt);g.current.position.y=.36+Math.sin(st.clock.elapsedTime*.72)*.08;g.current.rotation.y+=dt*.13}});
 return <group ref={g} position={[0,0,0]} scale={part==='body'?.70:part==='wheels'?2.3:2.1}>
@@ -62,5 +62,66 @@ return <group ref={g} position={[0,0,0]} scale={part==='body'?.70:part==='wheels
 {part==='computer'&&<group><mesh><boxGeometry args={[.56,.12,.69]}/><meshStandardMaterial color="#122b33" emissive="#438f88" emissiveIntensity={1}/></mesh>{[-.19,0,.19].map(x=><mesh key={x} position={[x,.08,0]}><boxGeometry args={[.05,.02,.44]}/><meshStandardMaterial color={c} emissive={c} emissiveIntensity={1.3}/></mesh>)}</group>}
 {part==='body'&&<group><mesh geometry={body}><meshPhysicalMaterial color={bodyRed} metalness={.91} roughness={.18} clearcoat={1} side={THREE.DoubleSide}/></mesh><mesh geometry={canopy}><meshPhysicalMaterial color="#0a1820" metalness={.63} roughness={.08} clearcoat={1} transparent opacity={.94} side={THREE.DoubleSide}/></mesh></group>}
 </group>}
-function ElectricVTOL({sim}:{sim?:SimState}){const root=useRef<Group>(null);const spinners=useRef<Group[]>([]);const area=sim?.area??15;const scale=Math.sqrt(area/15);const mass=sim?.mass??950;useFrame((s,dt)=>{if(root.current){root.current.position.y=Math.sin(s.clock.elapsedTime*1.35)*(.11+mass/10000);root.current.rotation.z=Math.sin(s.clock.elapsedTime*.8)*.035}spinners.current.forEach(o=>{if(o)o.rotation.y+=dt*(6+(mass/500))*((sim?.fanPower??70)/70)})});return <group ref={root}><mesh scale={[1,.72,1]}><sphereGeometry args={[.76,32,24]}/><meshPhysicalMaterial color="#a7c5cc" metalness={.92} roughness={.18} clearcoat={1}/></mesh><mesh position={[0,.28,-.16]} scale={[.58,.18,.8]}><sphereGeometry args={[1,32,16]}/><meshPhysicalMaterial color="#15333e" metalness={.7} roughness={.1}/></mesh>{[-1,1].flatMap((x)=>[-1,1].map((z,i)=><group key={x+','+z} position={[x*1.85,.04,z*1.55]}><mesh position={[-x*.65,0,-z*.52]} rotation={[0,Math.atan2(x,z),0]}><boxGeometry args={[1.3,.1,.13]}/><meshStandardMaterial color="#8caeb8" metalness={.9}/></mesh><mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[.73*scale,.055,14,56]}/><meshStandardMaterial color="#b5f7ec" metalness={.63} emissive="#58aca4" emissiveIntensity={.45}/></mesh><group ref={r=>{if(r)spinners.current[i+(x>0?2:0)]=r}} scale={[scale,1,scale]}>{Array.from({length:4},(_,j)=><mesh key={j} rotation={[0,j*Math.PI/2,0]} position={[.31,.02,0]}><boxGeometry args={[.65,.028,.11]}/><meshStandardMaterial color="#c8e4eb" metalness={.87}/></mesh>)}</group></group>))}</group>}
+function ElectricVTOL({sim}:{sim?:SimState}){
+ const root=useRef<Group>(null);
+ const spinners=useRef<Group[]>([]);
+ const shell=useMemo(()=>loft(longitudinal),[]);
+ const glass=useMemo(()=>loft([[-1.45,.36,.42,.09],[-1.10,.47,.66,.21],[-.67,.53,.77,.27],[.10,.59,.83,.26],[.66,.53,.73,.19],[1.23,.39,.55,.05]]),[]);
+ const area=sim?.area??15,rotorScale=Math.sqrt(area/15),mass=sim?.mass??950;
+ const energy=(sim?.fanPower??70)/100;
+ useFrame((s,dt)=>{
+  if(root.current){
+    root.current.position.y=Math.sin(s.clock.elapsedTime*1.15)*(.065+mass/16000);
+    root.current.rotation.z=Math.sin(s.clock.elapsedTime*.5)*.025;
+  }
+  spinners.current.forEach(o=>{if(o)o.rotation.y+=dt*(5.5+(mass/700))*Math.max(.01,energy)});
+ });
+ return <group ref={root}>
+  <group scale={[.73,.82,.69]} position={[0,.17,0]}>
+   <mesh geometry={shell} castShadow>
+    <meshPhysicalMaterial color="#8c3c48" metalness={.83} roughness={.17} clearcoat={1} clearcoatRoughness={.1} side={THREE.DoubleSide}/>
+   </mesh>
+   <mesh geometry={glass}>
+    <meshPhysicalMaterial color="#091b24" metalness={.68} roughness={.09} clearcoat={1} transparent opacity={.94} side={THREE.DoubleSide}/>
+   </mesh>
+   {[-1,1].map(side=><group key={side}>
+    <mesh position={[side*.95,.04,-2.32]} rotation={[0,0,0]}>
+     <boxGeometry args={[.32,.045,.24]}/>
+     <meshStandardMaterial color="#defffb" emissive="#d3fff9" emissiveIntensity={1.15}/>
+    </mesh>
+    <mesh position={[side*.93,.05,2.30]}>
+     <boxGeometry args={[.37,.05,.13]}/>
+     <meshStandardMaterial color="#ac1b2b" emissive="#d43842" emissiveIntensity={1.1}/>
+    </mesh>
+    <mesh position={[side*1.08,-.24,0]}>
+     <boxGeometry args={[.085,.09,1.75]}/>
+     <meshStandardMaterial color="#1b2d35" roughness={.45} metalness={.64}/>
+    </mesh>
+   </group>)}
+  </group>
+  {[-1,1].flatMap((x)=>[-1,1].map((z,i)=>{
+   const id=i+(x>0?2:0);
+   return <group key={x+','+z} position={[x*1.88,.10,z*1.55]}>
+    <mesh position={[-x*.72,-.12,-z*.53]} rotation={[0,Math.atan2(x,z),0]} castShadow>
+      <boxGeometry args={[1.47,.13,.16]}/>
+      <meshStandardMaterial color="#7c9aa1" metalness={.75} roughness={.31}/>
+    </mesh>
+    <mesh rotation={[Math.PI/2,0,0]}>
+      <torusGeometry args={[.72*rotorScale,.055,12,64]}/>
+      <meshStandardMaterial color="#c9e4df" metalness={.78} roughness={.26}/>
+    </mesh>
+    <group ref={r=>{if(r)spinners.current[id]=r}} scale={[rotorScale,1,rotorScale]}>
+      {Array.from({length:4},(_,j)=><mesh key={j} rotation={[0,j*Math.PI/2,0]} position={[.30,.02,0]}>
+        <boxGeometry args={[.68,.024,.105]}/>
+        <meshStandardMaterial color="#b4cdd0" metalness={.8} roughness={.28}/>
+      </mesh>)}
+    </group>
+    <mesh position={[0,-.15,0]}>
+      <cylinderGeometry args={[.28*rotorScale,.48*rotorScale,.4,32,1,true]}/>
+      <meshBasicMaterial color="#6cbfc0" transparent opacity={.035+energy*.095} depthWrite={false} side={THREE.DoubleSide}/>
+    </mesh>
+   </group>
+  }))}
+ </group>
+}
 export function VehicleScene({chapter=0,focus='body',exploded=false,interactive=false,onSelect,sim,inspection=false,variant='car',theme='dark'}:{chapter?:number;focus?:PartId;exploded?:boolean;interactive?:boolean;onSelect?:Select;sim?:SimState;inspection?:boolean;variant?:'car'|'evtol';theme?:'dark'|'light'}){return <Canvas dpr={typeof window!=='undefined'&&window.innerWidth<800?[1,1.12]:[1,1.45]} shadows camera={{position:[4,1.7,7],fov:38}} gl={{alpha:true,antialias:true,powerPreference:'high-performance'}} onCreated={({gl})=>{gl.setClearColor('#030609',0)}}><CinematicReflections/><ambientLight intensity={theme==='light'?2.1:1.25}/><hemisphereLight args={['#e9fbff','#263a48',1.6]}/><directionalLight position={[5,8,4]} intensity={4.5} color="#edf9ff" castShadow shadow-mapSize={[1024,1024]}/><spotLight position={[-5,5,-6]} angle={.62} penumbra={.9} intensity={80} color="#a2e4df"/><pointLight position={[4,1.2,5]} intensity={26} color="#f3b7b7" distance={16}/><Studio/><ContactShadows position={[0,-1.01,0]} opacity={.36} scale={9} blur={2.3} far={7} resolution={256} frames={1}/>{variant==='evtol'?<ElectricVTOL sim={sim}/>:<group><group position={inspection?[-1.95,-.3,0]:[0,0,0]} scale={inspection?.53:1}><Car focus={focus} exploded={exploded} interactive={interactive} onSelect={onSelect} sim={sim} inspection={inspection}/></group>{inspection&&<FocusPart part={focus} sim={sim}/>}</group>}{interactive?<OrbitControls enablePan={false} minDistance={3} maxDistance={11} maxPolarAngle={Math.PI*.82} target={[0,0,0]}/>:<CameraRig chapter={chapter}/>}</Canvas>}
