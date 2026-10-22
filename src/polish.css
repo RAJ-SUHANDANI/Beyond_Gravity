@@ -96,3 +96,17 @@
    white-space:nowrap!important;color:#a9caca!important;
  }
 }
+
+/* Physics curve is live data-driven SVG, not a static decorative screenshot. */
+.hover-curve{
+  margin:26px 0 22px;padding:18px 17px 14px;min-width:0;
+  border:1px solid rgba(170,230,219,.28);
+  background:linear-gradient(150deg,rgba(13,42,49,.82),rgba(7,23,33,.87));
+}
+.hover-curve .eyebrow{margin-bottom:14px;line-height:1.5}
+.hover-curve svg{display:block;width:100%;height:auto;max-width:100%;overflow:visible}
+.hover-curve-caption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-top:6px;font:9px 'DM Mono',monospace;letter-spacing:.055em;
+  line-height:1.6;color:#a5c8c9}
+.hover-curve-caption span:first-child{color:#baffea}
+@media(max-width:570px){.hover-curve{padding:12px;margin-top:18px}.hover-curve-caption{font-size:8px}}

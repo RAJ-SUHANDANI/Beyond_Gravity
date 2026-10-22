@@ -27,6 +27,9 @@ test('physics laboratory can change a parameter without a slider',async({page})=
  const dlg=page.getByRole('dialog',{name:/THE FUTURE LAB/i});
  await expect(dlg).toBeVisible();
  await expect(dlg.locator('input[type="range"]')).toHaveCount(0);
+ await expect(dlg.getByRole('img',{name:/Estimated electrical hover power curve/i})).toBeVisible();
+ await dlg.getByRole('button',{name:/Increase ROTOR DISK AREA/i}).click();
+ await expect(dlg.getByRole('img',{name:/At 16 square meters/i})).toBeVisible();
  await dlg.getByRole('button',{name:/Increase AIRCRAFT MASS/i}).click();
  await expect(dlg.getByText(/1,000 kg/)).toBeVisible();
  await dlg.getByRole('button',{name:/Close laboratory/i}).click();
