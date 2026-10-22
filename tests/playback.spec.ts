@@ -64,3 +64,30 @@ test('lab dialog traps focus, closes on Escape and restores the launching contro
  await expect(dialog).not.toBeVisible();
  await expect(launch).toBeFocused();
 });
+
+test('the 2026 demo theater embeds Tesla original without republishing media',async({page})=>{
+ await page.goto('/');
+ await page.getByRole('button',{name:/enter documentary experience/i}).click();
+ await page.getByRole('button',{name:/WATCH THE ACTUAL 2026 DEMONSTRATION/i}).click();
+ const video=page.getByRole('dialog',{name:/Official Tesla Roadster 2026 demonstration footage/i});
+ await expect(video).toBeVisible();
+ const iframe=video.locator('iframe');
+ await expect(iframe).toHaveAttribute('src',/youtube-nocookie\.com\/embed\/qt5p-_tE8d0\?start=363/);
+ await video.getByRole('button',{name:/Jump to The mid-air rotation at 10:56/i}).click();
+ await expect(iframe).toHaveAttribute('src',/start=656/);
+ await video.getByRole('button',{name:'Close video theater'}).click();
+ await expect(video).not.toBeVisible();
+});
+
+test('official video closes with Escape and returns keyboard focus',async({page})=>{
+ await page.goto('/');
+ await page.getByRole('button',{name:/enter documentary experience/i}).click();
+ const open=page.getByRole('button',{name:/WATCH THE ACTUAL 2026 DEMONSTRATION/i});
+ await open.click();
+ const dialog=page.getByRole('dialog',{name:/Official Tesla Roadster 2026 demonstration footage/i});
+ await expect(dialog).toBeVisible();
+ await expect(dialog.getByRole('button',{name:'Close video theater'})).toBeFocused();
+ await page.keyboard.press('Escape');
+ await expect(dialog).not.toBeVisible();
+ await expect(open).toBeFocused();
+});

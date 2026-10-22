@@ -9,6 +9,7 @@ This source log is as important as the visual design. The site should never sugg
 | Source | URL | How it is used |
 |---|---|---|
 | Tesla, Roadster product page | https://www.tesla.com/roadster | Official historic Roadster photos for visual study; older displayed 1.9 s / 250+ mph / 620 mi promotional figures; context for body, interior, aero efficiency and removable roof. **Not verification of the 2026 Rocket version's performance.** |
+| Tesla, official Roadster event livestream, 15 October 2026 | https://www.youtube.com/live/qt5p-_tE8d0 | Official 2026 demonstration with timestamped embedded chapters (ramp, kickflip, design, aero, acceleration). Publisher-hosted YouTube player; no video bytes in this repository. |
 | Tesla via its Roadster page: 2017 unveil Vimeo | https://player.vimeo.com/video/249563752 | Official embedded archival Roadster promotional video for the opening film; site only embeds video through its publisher/player. The video predates the 2026 flying demo. |
 | Tesla Roadster 2026 event replay and transcript | https://elonmuskarchive.org/video/tesla-roadster-event-2026-10-16 | 2026 reveal, ramp, kickflip, aerodynamic and acceleration segments, linked as a third-party archive. |
 | Reuters, Oct 15 2026 reveal | https://www.reuters.com/business/autos-transportation/tesla-set-unveil-next-generation-roadster-sports-ev-after-years-delay-2026-10-15/ | Reported capabilities and limitations; 2028 production target subject to change. |

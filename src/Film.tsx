@@ -10,12 +10,12 @@ import {narrateChapter,narrateIntro,stopNarration,pauseNarration,resumeNarration
 import {initialSim,type SimState} from './simulation';
 import {BeatVisualizer,ScienceStudio} from './ScienceStudio';
 import {Soundscape} from './soundscape';
-type Overlay='explore'|'experiment'|'proof'|'science'|null;
+type Overlay='explore'|'experiment'|'proof'|'science'|'event'|null;
 const videoHref='https://www.tesla.com/roadster';
 const ival=(n:number)=>String(n+1).padStart(2,'0');
 const clock=(seconds:number)=>{if(!Number.isFinite(seconds)||seconds<0)return '0:00';const value=Math.floor(seconds);return Math.floor(value/60)+':'+String(value%60).padStart(2,'0')};
 export default function Film(){
- const theme:'dark'='dark';const [sim,setSim]=useState<SimState>(initialSim);const [spokenCue,setSpokenCue]=useState('');const [playbackTime,setPlaybackTime]=useState<{position:number,duration:number}|null>(null);const [beat,setBeat]=useState(0);const [intro,setIntro]=useState(true),[chapter,setChapter]=useState(0),[playing,setPlaying]=useState(false),[muted,setMuted]=useState(false),[captions,setCaptions]=useState(true),[dossier,setDossier]=useState(false),[overlay,setOverlay]=useState<Overlay>(null),[ready,setReady]=useState(false),[finished,setFinished]=useState(false),[auto,setAuto]=useState(true);
+ const theme:'dark'='dark';const [sim,setSim]=useState<SimState>(initialSim);const [spokenCue,setSpokenCue]=useState('');const [playbackTime,setPlaybackTime]=useState<{position:number,duration:number}|null>(null);const [beat,setBeat]=useState(0);const [eventStart,setEventStart]=useState(363);const [intro,setIntro]=useState(true),[chapter,setChapter]=useState(0),[playing,setPlaying]=useState(false),[muted,setMuted]=useState(false),[captions,setCaptions]=useState(true),[dossier,setDossier]=useState(false),[overlay,setOverlay]=useState<Overlay>(null),[ready,setReady]=useState(false),[finished,setFinished]=useState(false),[auto,setAuto]=useState(true);
  const chapterRef=useRef(0),transitionRef=useRef(false),autoRef=useRef(true),mutedRef=useRef(false),overlayRef=useRef<Overlay>(null),touchY=useRef(0),timer=useRef<number|undefined>(undefined),wasPlayingBeforeOverlay=useRef(false);
  const soundtrack=useRef<Soundscape|null>(null);const current=chapters[chapter];
  useEffect(()=>{autoRef.current=auto},[auto]);
@@ -39,7 +39,7 @@ export default function Film(){
   overlayRef.current=null;setOverlay(null);
   if(prior==='explore'||prior==='experiment')stopNarration();
   if(wasPlayingBeforeOverlay.current){
-    if((prior==='science'||prior==='proof')&&resumeNarration()){
+    if((prior==='science'||prior==='proof'||prior==='event')&&resumeNarration()){
       soundtrack.current?.setPaused(false);setPlaying(true);setReady(false);
     }else{
       narrate(chapterRef.current);
@@ -49,6 +49,24 @@ export default function Film(){
   }
   wasPlayingBeforeOverlay.current=false;
  };
+ useEffect(()=>{
+  if(overlay!=='event'&&overlay!=='proof')return;
+  const previous=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  const panel=document.querySelector<HTMLElement>('.film-video-proof');
+  const close=panel?.querySelector<HTMLButtonElement>('button[aria-label="Close video theater"]');
+  close?.focus();
+  const keys=(e:KeyboardEvent)=>{
+   if(e.key==='Escape'){e.preventDefault();closeOverlay();return}
+   if(e.key!=='Tab'||!panel)return;
+   const controls=Array.from(panel.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],iframe,[tabindex]:not([tabindex="-1"])')).filter(x=>x.getClientRects().length>0);
+   if(!controls.length)return;
+   const first=controls[0],last=controls[controls.length-1];
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  };
+  document.addEventListener('keydown',keys);
+  return()=>{document.removeEventListener('keydown',keys);previous?.focus()};
+ },[overlay]);
  const stage=chapter===0?recentDemonstration:chapter===1?officialHistoric:chapter===2?[{value:'4 × 20',label:'FAN POWER · kW (REPORTED)'},{value:'ΔP × A',label:'FORCE MODEL'}]:chapter===3?[{value:'N₂',label:'COMPRESSED NITROGEN'},{value:'FINITE',label:'GAS ENDURANCE'}]:[{value:current.stat,label:current.statLabel}];
  return <>{intro?<Intro onEnter={begin}/>:<div className="film-root" onTouchStart={pointerDown} onTouchEnd={pointerUp} data-theme={theme} onPointerMove={e=>{const t=e.currentTarget;t.style.setProperty("--cursor-x",String(e.clientX/window.innerWidth));t.style.setProperty("--cursor-y",String(e.clientY/window.innerHeight));}}>
   {!overlay&&<div className="scene-fixed"><VehicleScene sim={sim} theme={theme} chapter={chapter} exploded={[1,2,3,5].includes(chapter)} focus={chapter===2?'fans':chapter===3?'thrusters':chapter===5?'computer' :'body'}/></div>}<div className="film-overlay-dark"/><BeatVisualizer chapter={chapter} beat={beat} sim={sim} onOpen={()=>setOverlay('science')}/>
@@ -63,7 +81,7 @@ export default function Film(){
     <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{duration:1,delay:.6}}>{current.description}</motion.p>
     <motion.div className="film-facts" initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:.7,duration:.5}}>{stage.map((s,i)=><button type="button" onClick={()=>setDossier(true)} className="film-fact" key={s.value+i}><strong>{s.value}</strong><span>{s.label}</span></button>)}</motion.div>
     <div className="film-embed-card"><button className="film-glass-button deep-dive-cta" onClick={()=>setOverlay('science')}><BookOpen size={17}/> DECODE THE SCIENCE <ArrowUpRight size={15}/></button>
-      {chapter===0&&<a className="film-evidence" href={eventReplayURL} target="_blank" rel="noreferrer"><Video size={15} style={{verticalAlign:'middle',marginRight:9}}/> WATCH 2026 FLIGHT DEMONSTRATION ↗</a>}
+      {chapter===0&&<button className="film-glass-button" onClick={()=>{setEventStart(363);setOverlay('event')}}><Video size={16}/> WATCH THE ACTUAL 2026 DEMONSTRATION</button>}
       {chapter===1&&<button className="film-glass-button" onClick={()=>setOverlay('proof')}><Clapperboard size={16}/> WATCH TESLA'S ARCHIVAL ROADSTER UNVEIL</button>}
       {chapter>1&&<button className="film-glass-button" onClick={()=>setOverlay(chapter===10?'experiment':'explore')}>{chapter===10?<FlaskConical size={17}/>:<Move3d size={17}/>} {chapter===10?'OPEN SIMULATOR':'INSPECT THE 3D MECHANISM'}</button>}
     </div>
@@ -77,7 +95,23 @@ export default function Film(){
   {overlay==='science'&&<ScienceStudio chapter={chapter} sim={sim} onClose={closeOverlay}/>}
   {overlay==='explore'&&<ExploreLab audioOn={!muted} onClose={closeOverlay} sim={sim} setSim={setSim} theme={theme}/>}
   {overlay==='experiment'&&<ExperimentLab onClose={closeOverlay} sim={sim} setSim={setSim} theme={theme}/>}
-  {overlay==='proof'&&<div className="film-video-proof" role="dialog" aria-modal="true" aria-label="Archival Tesla unveiling footage"><div className="proof-inner"><div className="proof-top"><strong>OFFICIAL TESLA ROADSTER UNVEIL / ARCHIVE FROM 2017</strong><button className="film-glass-button" onClick={closeOverlay}><X size={20}/> CLOSE</button></div><iframe title="Tesla Roadster 2017 official unveiling video" src="https://player.vimeo.com/video/249563752?dnt=1" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen/><p style={{fontSize:11,color:'#a9bbc5',lineHeight:1.5}}>Video embedded from the Vimeo player featured on Tesla's Roadster website. It predates the October 2026 flight demonstration.</p></div></div>}
+  {overlay==='event'&&<div className="film-video-proof" role="dialog" aria-modal="true" aria-label="Official Tesla Roadster 2026 demonstration footage">
+   <div className="proof-inner">
+    <div className="proof-top"><strong>TESLA ROADSTER · OFFICIAL 2026 UNVEILING</strong><button className="film-glass-button" onClick={closeOverlay} aria-label="Close video theater"><X size={20}/> CLOSE</button></div>
+    <div className="film-official-video">
+     <iframe key={eventStart} title="Tesla official Roadster 2026 launch livestream" src={`https://www.youtube-nocookie.com/embed/qt5p-_tE8d0?start=${eventStart}&rel=0&playsinline=1`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen/>
+    </div>
+    <div className="event-segments">
+      {eventSegments.map(segment=>{
+       const [minutes,seconds]=segment.time.split(':').map(Number);const at=minutes*60+seconds;
+       return <button className={eventStart===at?'selected':''} key={segment.time} onClick={()=>setEventStart(at)} aria-label={`Jump to ${segment.title} at ${segment.time}`}><span>{segment.time}</span>{segment.title}</button>
+      })}
+    </div>
+    <p className="event-rights-note">Publisher-hosted official Tesla event, 15 October 2026. The event footage remains Tesla’s intellectual property. Beyond Gravity is independent; this documentary does not download or republish the footage.</p>
+    <a className="event-source-link" href="https://www.youtube.com/live/qt5p-_tE8d0" target="_blank" rel="noreferrer">OPEN ORIGINAL TESLA VIDEO ON YOUTUBE <ArrowUpRight size={14}/></a>
+   </div>
+  </div>}
+  {overlay==='proof'&&<div className="film-video-proof" role="dialog" aria-modal="true" aria-label="Archival Tesla unveiling footage"><div className="proof-inner"><div className="proof-top"><strong>OFFICIAL TESLA ROADSTER UNVEIL / ARCHIVE FROM 2017</strong><button className="film-glass-button" onClick={closeOverlay} aria-label="Close video theater"><X size={20}/> CLOSE</button></div><iframe title="Tesla Roadster 2017 official unveiling video" src="https://player.vimeo.com/video/249563752?dnt=1" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen/><p style={{fontSize:11,color:'#a9bbc5',lineHeight:1.5}}>Video embedded from the Vimeo player featured on Tesla's Roadster website. It predates the October 2026 flight demonstration.</p></div></div>}
   {finished&&<div className="film-end-overlay"><div className="filmtag">THIS IS NOT THE END OF THE STORY</div><h2>BEYOND<br/>GRAVITY.</h2><p>The Roadster's stunt showed what's possible for a moment. The future asks how to make flight safe, practical, and repeatable.</p><div className="film-links"><button onClick={()=>{setFinished(false);chapterRef.current=0;setChapter(0);narrate(0)}}><RotateCcw size={16}/> REPLAY THE DOCUMENTARY</button><button onClick={()=>{setFinished(false);setOverlay('experiment')}}>ENTER THE FUTURE LAB ↗</button><a href="https://github.com/RAJ-SUHANDANI/Beyond_Gravity" target="_blank" rel="noreferrer" style={{border:'1px solid #a9e1d355',padding:'13px',fontSize:11}}>VIEW THE SOURCE ↗</a></div></div>}
  </div>}</>
 }
