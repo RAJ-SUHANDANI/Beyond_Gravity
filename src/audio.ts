@@ -74,6 +74,6 @@ function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,
  void audio.play().catch(fallback);
  return ()=>{if(mine===serial)stopNarration()};
 }
-export function narrateChapter(i:number,onEnd?:()=>void,onCue?:CueHandler){const original=chapters[i]?.narration;const text=original?fullNarration(i,original):undefined;if(!text){onEnd?.(false);return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
+export function narrateChapter(i:number,onEnd?:(audible:boolean)=>void,onCue?:CueHandler){const original=chapters[i]?.narration;const text=original?fullNarration(i,original):undefined;if(!text){onEnd?.(false);return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
 export function narratePart(id:PartId,onEnd?:()=>void,onCue?:CueHandler){const p=parts.find(x=>x.id===id);if(!p)return;return play(p.female,'female',asset('female-'+id),onEnd,onCue)}
 export function narrateIntro(onEnd?:()=>void,onCue?:CueHandler){return play('Beyond Gravity. A documentary you can step inside. The stunt. The science. The future.','female',asset('female-intro'),onEnd,onCue)}
