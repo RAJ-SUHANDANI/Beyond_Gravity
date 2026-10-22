@@ -89,10 +89,27 @@ export function BeatVisualizer({chapter,beat,sim,onOpen}:{chapter:number;beat:nu
 
 export function ScienceStudio({chapter,sim,onClose}:{chapter:number;sim:SimState;onClose:()=>void}){
  const [beat,setBeat]=useState(0);
+ const dialogRef=React.useRef<HTMLDivElement>(null);
+ useEffect(()=>{
+  const previous=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  const dialog=dialogRef.current;
+  const close=dialog?.querySelector<HTMLButtonElement>('button[aria-label="Close science theater"]');
+  close?.focus();
+  const trap=(event:KeyboardEvent)=>{
+   if(event.key!=='Tab'||!dialog)return;
+   const controls=Array.from(dialog.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el=>el.getClientRects().length>0);
+   if(controls.length===0)return;
+   const first=controls[0],last=controls[controls.length-1],selected=document.activeElement;
+   if(event.shiftKey&&selected===first){event.preventDefault();last.focus()}
+   else if(!event.shiftKey&&selected===last){event.preventDefault();first.focus()}
+  };
+  document.addEventListener('keydown',trap);
+  return()=>{document.removeEventListener('keydown',trap);previous?.focus()}
+ },[]);
  useEffect(()=>setBeat(0),[chapter]);
  useEffect(()=>{const key=(e:KeyboardEvent)=>{if(e.key==='Escape')onClose();if(e.key==='ArrowRight')setBeat(x=>Math.min(2,x+1));if(e.key==='ArrowLeft')setBeat(x=>Math.max(0,x-1))};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[onClose]);
  const item=story[chapter][beat];
- return <div className="science-theater" role="dialog" aria-modal="true" aria-label={'Technical documentary: '+chapters[chapter].title}>
+ return <div ref={dialogRef} className="science-theater" role="dialog" aria-modal="true" aria-label={'Technical documentary: '+chapters[chapter].title}>
    <header className="science-header"><div className="science-brand"><span>BG / RESEARCH CINEMA</span><strong>THE SCIENCE BEHIND THE STORY</strong></div><button onClick={onClose} aria-label="Close science theater"><X size={21}/></button></header>
    <div className="science-heading"><div className="science-counter">CHAPTER {String(chapter+1).padStart(2,'0')} / {chapters[chapter].title}</div><h2>{item.title}<span>.</span></h2><p>{item.why}</p></div>
    <div className="science-main">
