@@ -110,3 +110,29 @@
   line-height:1.6;color:#a5c8c9}
 .hover-curve-caption span:first-child{color:#baffea}
 @media(max-width:570px){.hover-curve{padding:12px;margin-top:18px}.hover-curve-caption{font-size:8px}}
+
+/* Verified mobile QA: constrain the diagram to the physical visual viewport.
+   Flexbox intrinsic SVG sizing must never cause horizontal clipping. */
+@media(max-width:570px){
+ .science-theater .science-main{
+   width:100vw!important;max-width:100vw!important;min-width:0!important;
+   padding:0 20px!important;box-sizing:border-box!important;
+   overflow-x:clip!important;
+ }
+ .science-theater .science-stage{
+   display:block!important;width:calc(100vw - 40px)!important;
+   min-width:0!important;max-width:calc(100vw - 40px)!important;
+   margin:0 auto!important;flex:0 0 auto!important;
+   aspect-ratio:1.83!important;box-sizing:border-box!important;
+   overflow:hidden!important;
+ }
+ .science-theater .science-stage .science-graphic{
+   display:block!important;width:100%!important;max-width:100%!important;
+   height:100%!important;max-height:100%!important;overflow:hidden!important;
+ }
+ .science-theater .science-equation{
+   right:7px!important;top:7px!important;max-width:69%!important;
+   font-size:8px!important;padding:7px 8px!important;white-space:normal!important;
+ }
+ .science-theater .science-reading{width:100%!important;min-width:0!important}
+}

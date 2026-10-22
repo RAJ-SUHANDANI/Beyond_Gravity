@@ -24,6 +24,16 @@ test('director cut: screenshot and safe hit targets at desktop or mobile dimensi
  }
  await action.click();
  await expect(page.getByRole('dialog',{name:/Technical documentary/i})).toBeVisible();
+ if(testInfo.project.name==='mobile-chromium'){
+   const rect=await page.locator('.science-stage').boundingBox();
+   const size=page.viewportSize();
+   expect(rect,'mobile diagram must have a measurable bounding box').not.toBeNull();
+   expect(size,'mobile viewport must be measurable').not.toBeNull();
+   if(rect&&size){
+     expect(rect.x).toBeGreaterThanOrEqual(-1);
+     expect(rect.x+rect.width).toBeLessThanOrEqual(size.width+1);
+   }
+ }
  await page.screenshot({path:'docs/qa/'+testInfo.project.name+'-science-theater.png',animations:'disabled'});
  await page.getByRole('button',{name:/Close science theater/i}).click();
 });
