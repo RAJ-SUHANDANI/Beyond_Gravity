@@ -188,7 +188,33 @@ function Car({focus='body',exploded=false,interactive=false,onSelect,sim,inspect
   <group ref={controller} visible={!(inspection&&focus==='computer')} onClick={e=>{e.stopPropagation();onSelect?.('computer')}}><mesh position={[0,.11,-.4]}><boxGeometry args={[.56,.12,.69]}/><meshStandardMaterial color="#122b33" emissive={focus==='computer'?'#438f88':'#092427'} emissiveIntensity={1}/></mesh>{[-.19,0,.19].map(x=><mesh key={x} position={[x,.19,-.4]}><boxGeometry args={[.05,.02,.44]}/><meshStandardMaterial color={c} emissive={c} emissiveIntensity={focus==='computer'?2:.65}/></mesh>)}</group>
  </group>
 }
-function CameraRig({chapter}:{chapter:number}){useFrame(({camera},dt)=>{const phase=chapter%4;const x=[4.8,-4.2,5.2,4.6][phase],y=[1.8,2.5,-1.0,3.1][phase],z=[7.8,8.0,7.5,7.7][phase];camera.position.set(THREE.MathUtils.damp(camera.position.x,x,1.5,dt),THREE.MathUtils.damp(camera.position.y,y,1.5,dt),THREE.MathUtils.damp(camera.position.z,z,1.5,dt));camera.lookAt(0,0,0)});return null}
+/** Twelve independent, cinematic shot paths; chapter selection changes the framing. */
+const shots:readonly [number,number,number][]=[
+ [3.65,1.50,6.55],[-3.5,2.4,5.6],[3.5,-.55,5.8],[-2.9,.95,6.0],
+ [2.5,4.05,4.95],[2.65,1.6,5.35],[5.5,1.5,-1.5],[4.2,1.05,5.95],
+ [-5.5,2.65,1.75],[4.25,1.55,-2.3],[1.25,4.4,4.95],[3.55,1.35,6.2]
+];
+function CameraRig({chapter}:{chapter:number}){
+ const prev=useRef(chapter),began=useRef(0);
+ useFrame(({camera,clock},dt)=>{
+  if(prev.current!==chapter){prev.current=chapter;began.current=clock.elapsedTime}
+  const shot=shots[Math.min(shots.length-1,chapter)];
+  const reduced=typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const t=reduced?0:Math.max(0,clock.elapsedTime-began.current);
+  const drift=Math.min(1,t/12);
+  const move=drift*Math.sin(Math.min(1,t/12)*Math.PI/2);
+  const x=shot[0]+Math.sin(t*.14+chapter)*.36*move;
+  const y=shot[1]+Math.sin(t*.10+.5)*.12*move;
+  const z=shot[2]+Math.cos(t*.11+chapter)*.25*move;
+  camera.position.set(
+   THREE.MathUtils.damp(camera.position.x,x,1.05,dt),
+   THREE.MathUtils.damp(camera.position.y,y,1.05,dt),
+   THREE.MathUtils.damp(camera.position.z,z,1.05,dt)
+  );
+  camera.lookAt(0,0,0);
+ });
+ return null;
+}
 function SceneFrameProbe({onReady}:{onReady?:()=>void}){const frames=useRef(0),fired=useRef(false);useFrame(()=>{if(!fired.current&&++frames.current>=26){fired.current=true;onReady?.()}});return null}
 function CinematicReflections(){const{gl,scene}=useThree();useEffect(()=>{const pmrem=new THREE.PMREMGenerator(gl);const room=new RoomEnvironment();const env=pmrem.fromScene(room,.035);const old=scene.environment;scene.environment=env.texture;scene.environmentIntensity=1.15;return()=>{scene.environment=old;env.texture.dispose();room.dispose();pmrem.dispose()};},[gl,scene]);return null}
 function Studio(){return <group><mesh rotation={[-Math.PI/2,0,0]} position={[0,-1.02,0]} receiveShadow><planeGeometry args={[120,120]}/><meshBasicMaterial color="#08131c"/></mesh>{[-1,1].map(s=><mesh key={s} position={[s*5,3.1,-4]} rotation={[0,s*.29,0]}><planeGeometry args={[.06,7.8]}/><meshBasicMaterial color="#a6f6e6" transparent opacity={.28}/></mesh>)}<gridHelper args={[23,16,'#183a44','#11212a']} position={[0,-1.006,0]}/></group>}

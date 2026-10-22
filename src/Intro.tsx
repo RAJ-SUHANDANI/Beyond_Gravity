@@ -8,17 +8,19 @@ import {ArrowUpRight,Volume2,VolumeX,Play,MoveUpRight} from 'lucide-react';
  * never mirrored, trimmed, downloaded or republished.
  */
 export function Intro({onEnter}:{onEnter:()=>void}){
- const [sound,setSound]=useState(true),[loaded,setLoaded]=useState(false);
+ const [sound,setSound]=useState(true),[loaded,setLoaded]=useState(false),[videoReady,setVideoReady]=useState(()=>typeof window!=='undefined'&&window.innerWidth>760);
  const background=useRef<HTMLDivElement>(null);
  const button=useRef<HTMLButtonElement>(null);
  const [departing,setDeparting]=useState(false);
  const position=useRef({x:0,y:0});
  useEffect(()=>{const id=window.setTimeout(()=>setLoaded(true),400);return()=>window.clearTimeout(id)},[]);
+ // Paint the mobile title and enter control before initializing the heavy third-party player.
+ useEffect(()=>{if(videoReady)return;const id=window.setTimeout(()=>setVideoReady(true),1900);return()=>window.clearTimeout(id)},[videoReady]);
  const move=(e:React.PointerEvent)=>{const x=e.clientX/window.innerWidth-.5,y=e.clientY/window.innerHeight-.5;position.current={x,y};if(background.current){background.current.style.setProperty('--px',String(x));background.current.style.setProperty('--py',String(y));}};
  const magnetic=(e:React.PointerEvent<HTMLButtonElement>)=>{if(!button.current)return;const r=button.current.getBoundingClientRect();button.current.style.setProperty('--mag-x',String((e.clientX-r.left-r.width/2)*.13)+'px');button.current.style.setProperty('--mag-y',String((e.clientY-r.top-r.height/2)*.13)+'px');};
  const enter=()=>{if(departing)return;setDeparting(true);onEnter()};
  return <div className={'cinema-intro '+(departing?'cinema-departing':'')} onPointerMove={move} ref={background}>
-  <div className="intro-video" aria-hidden="true"><iframe src="https://www.youtube-nocookie.com/embed/7p5LxFdc-Qg?autoplay=1&mute=1&loop=1&playlist=7p5LxFdc-Qg&controls=0&modestbranding=1&rel=0&playsinline=1" title="Tesla official 2026 Roadster ramp demonstration video" tabIndex={-1} allow="autoplay; fullscreen; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin"/></div>
+  <div className="intro-video" aria-hidden="true">{videoReady&&<iframe src="https://www.youtube-nocookie.com/embed/7p5LxFdc-Qg?autoplay=1&mute=1&loop=1&playlist=7p5LxFdc-Qg&controls=0&modestbranding=1&rel=0&playsinline=1" title="Tesla official 2026 Roadster ramp demonstration video" tabIndex={-1} allow="autoplay; fullscreen; picture-in-picture" loading="lazy" referrerPolicy="strict-origin-when-cross-origin"/>}</div>
   <div className="intro-dark"/><div className="intro-cinematic-bars" aria-hidden="true"/><div className="intro-beam"/><div className="intro-glass"/><div className="intro-aperture"/><div className="intro-shadow-sweep"/><div className="intro-edge-light"/>
   <div className="intro-crosshair left" aria-hidden="true">+</div><div className="intro-crosshair right" aria-hidden="true">+</div>
   <div className="intro-top"><div className="intro-monogram">BG<span>—</span>001</div><span>AN INDEPENDENT INTERACTIVE DOCUMENTARY</span><span className="intro-corner">2026 / FLIGHT RESEARCH</span></div>

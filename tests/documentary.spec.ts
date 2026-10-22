@@ -47,3 +47,11 @@ test('buttons stay within viewport when shown, including reduced-motion mode',as
  await expect(action).toBeInViewport();
  await expect(page.locator('.film-root')).toHaveAttribute('data-theme','dark');
 });
+
+test('the first frame is lightweight, with no WebGL canvas before entry',async({page})=>{
+ await page.goto('/');
+ await expect(page.getByRole('heading',{name:/BEYOND GRAVITY/i})).toBeVisible({timeout:7000});
+ await expect(page.locator('canvas')).toHaveCount(0);
+ await page.getByRole('button',{name:/enter documentary experience/i}).click();
+ await expect(page.locator('.scene-fixed canvas')).toBeVisible({timeout:18000});
+});

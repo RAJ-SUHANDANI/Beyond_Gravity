@@ -200,3 +200,25 @@
  .film-root .film-dossier{width:calc(100vw - 24px);right:12px;top:104px;max-height:calc(100dvh - 195px);padding:20px}
  .film-root .dossier-header{top:-20px;padding:13px 0;margin-top:-13px}
 }
+
+/* Mobile first paint: display the cinematic headline promptly, with stable
+   block dimensions; defer heavy video and WebGL independently of the copy. */
+.film-3d-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#b9d7d6;background:radial-gradient(ellipse at 60% 40%,#1b3240 0,#08121d 67%,#03060d 100%);font:11px 'DM Mono',monospace;letter-spacing:.14em}
+.film-3d-fallback strong{font-size:clamp(16px,2vw,28px);letter-spacing:.06em;color:#e6fff5;text-align:center}
+.film-3d-fallback i{height:2px;width:40%;max-width:220px;background:linear-gradient(90deg,transparent,#bbf5e4,transparent);animation:fallbackSweep 1.8s ease-in-out infinite}
+.film-modal-loading{position:fixed;z-index:220;inset:0;display:grid;place-items:center;background:#07131af5;color:#caf4e8;font:11px 'DM Mono',monospace;letter-spacing:.15em}
+@keyframes fallbackSweep{50%{transform:scaleX(.45);opacity:.45}}
+@media(max-width:760px){
+ .cinema-intro .intro-heading-mask{min-height:clamp(102px,25vw,150px)}
+ .cinema-intro .intro-title{animation:mobileDocumentaryTitle 1s .15s both;white-space:normal;will-change:transform;line-height:.93}
+ .cinema-intro .intro-eyebrow{animation:none;opacity:1;transform:none}
+ .cinema-intro .intro-strap{animation:fadeUp .6s .65s both}
+ .cinema-intro .intro-enter-wrap{animation:fadeUp .65s .85s both}
+ .cinema-intro .intro-cinematic-bars:before,.cinema-intro .intro-cinematic-bars:after{animation-duration:.75s}
+ .cinema-intro .intro-aperture{animation-duration:1.4s}
+ .cinema-intro .intro-shadow-sweep{animation-duration:1.3s}
+}
+@keyframes mobileDocumentaryTitle{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){
+ .cinema-intro .intro-title,.cinema-intro .intro-strap,.cinema-intro .intro-enter-wrap,.film-3d-fallback i{animation:none!important;opacity:1!important;transform:none!important}
+}
