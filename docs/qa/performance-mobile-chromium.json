@@ -1,19 +1,19 @@
 {
-  "commit": "589a54745c1b7eb34c1459dcb53447dc94b83cad",
+  "commit": "6fc642ede41c1e4e1950b4217f5f2ef8f1b054b3",
   "viewport": "mobile-chromium",
   "observations": {
     "averageFps": 1.4,
-    "p95FrameMs": 3049.8,
-    "medianFrameMs": 516.6,
+    "p95FrameMs": 3166.6,
+    "medianFrameMs": 483.3,
     "observedFrames": 8,
-    "domContentLoadedMs": 80,
+    "domContentLoadedMs": 67,
     "trackedResourceCount": 6,
-    "transferBytesReported": 475287
+    "transferBytesReported": 475345
   },
   "intro": {
-    "duration": 127,
-    "domContentLoaded": 80,
-    "responseEnd": 11
+    "duration": 90,
+    "domContentLoaded": 67,
+    "responseEnd": 3
   },
   "limitations": "Chromium CI synthetic; not a physical device benchmark or Lighthouse Core Web Vitals."
 }
