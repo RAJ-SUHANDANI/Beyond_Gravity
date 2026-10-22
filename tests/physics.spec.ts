@@ -17,3 +17,14 @@ test('hover power increases with vehicle mass, and bounds remain enforced',()=>{
  expect(adjust({...initialSim,mass:bounds.mass.max},'mass',1).mass).toBe(bounds.mass.max);
  expect(adjust({...initialSim,mass:bounds.mass.min},'mass',-1).mass).toBe(bounds.mass.min);
 });
+
+import {chapterBeatForCue} from '../src/audio';
+import {story} from '../src/story';
+test('each recorded science explanation aligns to the correct authored animation',()=>{
+ for(let chapter=0;chapter<12;chapter++){
+  for(let beat=0;beat<3;beat++){
+   const phrase=story[chapter][beat].voice.slice(0,42);
+   expect(chapterBeatForCue(chapter,phrase),`chapter ${chapter+1} science beat ${beat+1}`).toBe(beat);
+  }
+ }
+});

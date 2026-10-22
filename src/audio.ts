@@ -1,5 +1,5 @@
 import {chapters,parts,type PartId} from './data';
-import {fullNarration} from './story';
+import {fullNarration,story} from './story';
 
 /**
  * Documentary audio director.
@@ -58,6 +58,23 @@ export function makeCues(script:string):Cue[]{
  return cues.length?cues:[{text:script,start:0,end:script.length}];
 }
 export function getNarrationCues(index:number){const c=chapters[index];return makeCues(c?fullNarration(index,c.narration):'')}
+/** Map the actual spoken phrase to a named science beat, not a naive equal
+ * duration segment. Matches the script used to render each Kokoro clip. */
+export function chapterBeatForCue(chapterIndex:number,phrase:string,cueIndex=0,cueCount=1){
+ const chapter=chapters[chapterIndex],beats=story[chapterIndex];
+ if(!chapter||!beats)return 0;
+ const normal=(value:string)=>value.toLowerCase().replace(/[‘’]/g,"'").replace(/\s+/g,' ').trim();
+ const script=normal(fullNarration(chapterIndex,chapter.narration));
+ const position=script.indexOf(normal(phrase));
+ if(position<0)return Math.min(2,Math.floor(cueIndex/Math.max(1,cueCount)*3));
+ let beat=0;
+ for(let i=0;i<beats.length;i++){
+  const offset=script.indexOf(normal(beats[i].voice).slice(0,40));
+  if(offset>=0&&position>=offset)beat=i;
+ }
+ return beat;
+}
+
 
 function preferredVoice(role:Role){
  if(!('speechSynthesis'in window))return null;
@@ -122,6 +139,6 @@ function play(script:string,role:Role,src:string,onEnd?:(audible:boolean)=>void,
  void audio.play().catch(fallback);
  return ()=>{if(mine===serial)stopNarration()};
 }
-export function narrateChapter(i:number,onEnd?:(audible:boolean)=>void,onCue?:CueHandler){const original=chapters[i]?.narration;const text=original?fullNarration(i,original):undefined;if(!text){onEnd?.(false);return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
+export function narrateChapter(i:number,onEnd?:(audible:boolean)=>void,onCue?:CueHandler){const original=chapters[i]?.narration;const text=original?fullNarration(i,original):undefined;if(!text){onEnd?.(false);return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,(phrase,index,count)=>onCue?.(phrase,chapterBeatForCue(i,phrase,index,count),3))}
 export function narratePart(id:PartId,onEnd?:()=>void,onCue?:CueHandler){const p=parts.find(x=>x.id===id);if(!p)return;return play(p.female,'female',asset('female-'+id),onEnd,onCue)}
 export function narrateIntro(onEnd?:()=>void,onCue?:CueHandler){return play('Beyond Gravity. A documentary you can step inside. The stunt. The science. The future.','female',asset('female-intro'),onEnd,onCue)}

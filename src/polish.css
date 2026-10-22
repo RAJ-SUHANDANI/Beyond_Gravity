@@ -222,3 +222,27 @@
 @media(prefers-reduced-motion:reduce){
  .cinema-intro .intro-title,.cinema-intro .intro-strap,.cinema-intro .intro-enter-wrap,.film-3d-fallback i{animation:none!important;opacity:1!important;transform:none!important}
 }
+
+/* Lighthouse CLS: the opening letterbox used height animation, which changes
+   element geometry every frame. A transform reproduces the same cinematic
+   aperture with no layout reflow. */
+.cinema-intro .intro-cinematic-bars:before,
+.cinema-intro .intro-cinematic-bars:after{
+ --letterbox-open-scale:7.15;
+ backface-visibility:hidden;
+ will-change:transform;
+}
+.cinema-intro .intro-cinematic-bars:before{transform-origin:center top}
+.cinema-intro .intro-cinematic-bars:after{transform-origin:center bottom}
+@keyframes letterboxIn{
+ from{transform:scaleY(var(--letterbox-open-scale,7.15))}
+ to{transform:scaleY(1)}
+}
+@media(max-width:580px){
+ .cinema-intro .intro-cinematic-bars:before,
+ .cinema-intro .intro-cinematic-bars:after{--letterbox-open-scale:12.5}
+}
+@media(prefers-reduced-motion:reduce){
+ .cinema-intro .intro-cinematic-bars:before,
+ .cinema-intro .intro-cinematic-bars:after{animation:none!important;transform:none!important}
+}
