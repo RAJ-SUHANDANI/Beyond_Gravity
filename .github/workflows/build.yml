@@ -2,12 +2,16 @@ name: Build, typecheck & browser QA
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/qa/**'
   pull_request:
     branches: [main]
+permissions:
+  contents: write
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,12 +21,27 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npx playwright install --with-deps chromium
+      - run: mkdir -p docs/qa
       - run: npm run test
-      - if: failure()
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: documentary-browser-diagnostics
           path: |
             playwright-report/
             test-results/
+            docs/qa/
           retention-days: 7
+      - name: Publish QA captures from actual Chromium
+        if: ${{ github.event_name == 'push' && success() }}
+        run: |
+          git config user.name "Beyond Gravity QA"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/qa/*.png
+          if git diff --cached --quiet; then
+            echo "No screenshots changed"
+          else
+            git commit -m "test: refresh rendered desktop and mobile QA captures"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
