@@ -75,3 +75,24 @@
 @media(min-width:1060px){
  .film-root .film-script{width:min(520px,36vw);left:49%;max-height:72px}
 }
+
+/* The producer credit remains readable in mobile film mode: the old hidden
+   footer-activity parent otherwise prevented this explicit credit from rendering. */
+@media(max-width:580px){
+ .film-root .film-bottom .film-activity{
+   display:block!important;position:fixed!important;
+   bottom:3px!important;right:8px!important;top:auto!important;
+   width:auto!important;padding:2px 5px!important;
+   z-index:90!important;pointer-events:none!important;
+   background:rgba(5,13,21,.8);
+ }
+ .film-root .film-bottom .film-activity .film-player-status,
+ .film-root .film-bottom .film-activity .film-audio-clock{display:none!important}
+ .film-root .film-bottom .film-creator-credit{
+   display:block!important;position:static!important;
+   bottom:auto!important;right:auto!important;
+   padding:0!important;margin:0!important;
+   font-size:8px!important;line-height:1.3!important;
+   white-space:nowrap!important;color:#a9caca!important;
+ }
+}
