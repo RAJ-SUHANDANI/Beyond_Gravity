@@ -33,6 +33,10 @@ Project policy:
 6. For a public high-profile release, consider professional intellectual-property review. **No legal notice can be guaranteed away** through a disclaimer or attribution alone.
 7. On any takedown/licensing request, remove or replace disputed media promptly.
 
+## Opening film — official October 2026 footage
+
+The entrance uses Tesla's [The Ramp | Roadster](https://www.youtube.com/watch?v=7p5LxFdc-Qg) clip of the 15 October 2026 demonstration. The 46-second YouTube player is displayed directly from Tesla's channel as a background behind independent overlays. No downloaded footage is stored in this project. Playback and availability remain subject to Tesla and YouTube controls. The 2017 Vimeo archival clip is separately available in the model-history chapter.
+
 ## 2026 video moments
 
 An event replay and transcript references:

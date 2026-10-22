@@ -17,7 +17,7 @@
 ### 01 — Cinematic entry, not a website landing page
 The experience starts behind a near-black screen. A historical *publisher-hosted official Roadster unveil video* emerges through aperture masks, a lighting sweep, letterboxing and a hand-art-directed montage effect. Pointer movement adds subtle video-layer depth. A metallic, dimensional **Enter Experience** button completes the opening. It is **video**, not the site's 3D model.
 
-**Media honesty:** Tesla's official Roadster webpage features a 2017 Vimeo unveil. This intro is that archival video, **not** footage of the separate 2026 flight demonstrations. The authentic 2026 event is now playable in a separate, publisher-hosted YouTube theater with timestamp controls for the ramp, kickflip, design, aerodynamics and acceleration chapters. The independent 2017 intro film remains explicitly identified as archival. We neither redistribute Tesla film files nor pretend to own them.
+**Media honesty:** Tesla's official Roadster webpage features a 2017 Vimeo unveil. The entrance now uses Tesla’s official **October 2026** ramp demonstration, embedded from its YouTube channel. The authentic 2026 event is now playable in a separate, publisher-hosted YouTube theater with timestamp controls for the ramp, kickflip, design, aerodynamics and acceleration chapters. The independent 2017 intro film remains explicitly identified as archival. We neither redistribute Tesla film files nor pretend to own them.
 
 ### 02 — A film that unlocks chapter by chapter
 A single animated stage replaces ordinary stacked content blocks. Each chapter is introduced by editorial typography, a kinetic reveal wipe, a live-moving 3D scene, ambient cinematic treatment and narrated explanation. **The first experience begins after Enter is clicked** (browsers commonly block audible autoplay without interaction). Subsequent narration can automatically advance the story when it concludes. Manual chapter seeking remains possible.
@@ -200,3 +200,8 @@ A GitHub Actions green build confirms TypeScript and Vite completion, **not visu
 ### Verified original 2026 footage
 
 Chapter 01 includes a **Watch the Actual 2026 Demonstration** control that opens the [official Tesla event replay](https://www.youtube.com/live/qt5p-_tE8d0), embedded using YouTube's privacy-enhanced player and user-selectable timestamp segments. It loads only when requested. This remains a third-party hosted clip; original media rights stay with Tesla. If embedding is disabled by the provider, the direct link remains available.
+
+
+### October 2026 entrance footage
+
+The opening embeds [Tesla's 2026 'The Ramp | Roadster' demonstration](https://www.youtube.com/watch?v=7p5LxFdc-Qg) as a muted looping cinematic background. The original 2017 Roadster promotional film remains distinguishable as archival video in Chapter 02. Tesla owns the source footage; embedding does not grant rights to download, modify or redistribute it.
