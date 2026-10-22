@@ -14,7 +14,46 @@ const longitudinal=[
  [-2.81,-.10,.22,.09],[-2.68,-.08,.69,.23],[-2.34,-.07,1.02,.31],[-1.9,-.06,1.16,.38],[-1.45,-.035,1.22,.40],
  [-.72,-.01,1.19,.41],[.05,-.04,1.16,.4],[.84,-.05,1.2,.39],[1.6,-.07,1.17,.4],[2.24,-.08,1.0,.35],[2.63,-.12,.70,.22],[2.83,-.13,.28,.08]
 ] as const;
-function loft(stations:readonly (readonly [number,number,number,number])[],facets=36){const verts:number[]=[],idx:number[]=[];for(const [z,cy,w,h] of stations){for(let j=0;j<facets;j++){const a=2*Math.PI*j/facets;verts.push(w*Math.cos(a),cy+h*Math.sin(a),z)}}for(let i=0;i<stations.length-1;i++)for(let j=0;j<facets;j++){const k=(j+1)%facets,a=i*facets+j,b=i*facets+k,cc=(i+1)*facets+j,d=(i+1)*facets+k;idx.push(a,b,cc,b,d,cc)}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setIndex(idx);geo.computeVertexNormals();return geo}
+function loft(stations:readonly (readonly [number,number,number,number])[],facets=48){
+ // Original sculpted longitudinal loft. Catmull-Rom interpolation preserves
+ // broad aero surfaces without introducing polygonal kinks at control stations.
+ const smooth=(a:number,b:number,c:number,d:number,t:number)=>{
+   const t2=t*t,t3=t2*t;
+   return .5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t2+(-a+3*b-3*c+d)*t3);
+ };
+ const profiles:[number,number,number,number][]=[];
+ for(let i=0;i<stations.length-1;i++){
+   for(let sub=0;sub<5;sub++){
+     const t=sub/5;
+     const row=[0,1,2,3].map(field=>{
+       const before=stations[Math.max(0,i-1)][field];
+       const a=stations[i][field],b=stations[i+1][field];
+       const after=stations[Math.min(stations.length-1,i+2)][field];
+       return smooth(before,a,b,after,t);
+     });
+     profiles.push([row[0],row[1],Math.max(.035,row[2]),Math.max(.025,row[3])]);
+   }
+ }
+ profiles.push([...stations[stations.length-1]] as [number,number,number,number]);
+ const verts:number[]=[],idx:number[]=[];
+ for(const [z,cy,w,h] of profiles){
+   for(let j=0;j<facets;j++){
+     const angle=2*Math.PI*j/facets;
+     verts.push(w*Math.cos(angle),cy+h*Math.sin(angle),z);
+   }
+ }
+ for(let i=0;i<profiles.length-1;i++){
+   for(let j=0;j<facets;j++){
+     const next=(j+1)%facets;
+     const a=i*facets+j,b=i*facets+next,c=(i+1)*facets+j,d=(i+1)*facets+next;
+     idx.push(a,b,c,b,d,c);
+   }
+ }
+ const geo=new THREE.BufferGeometry();
+ geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+ geo.setIndex(idx);geo.computeVertexNormals();
+ return geo;
+}
 function RacingWheel({x,z}:{x:number;z:number}){
  const wheel=useRef<Group>(null);
  useFrame((_,dt)=>{if(wheel.current)wheel.current.rotation.z+=dt*.13});
