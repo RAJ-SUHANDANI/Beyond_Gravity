@@ -48,5 +48,29 @@ test('screenshot of future laboratory without scroll slider',async({page},testIn
  const dlg=page.getByRole('dialog',{name:/THE FUTURE LAB/i});
  await expect(dlg).toBeVisible();
  await expect(dlg.locator('input[type="range"]')).toHaveCount(0);
+ const stage=dlg.locator('.live-sim-3d');
+ await expect(stage).toHaveAttribute('data-model-ready','true',{timeout:24000});
+ await page.waitForTimeout(480);
+ if(testInfo.project.name==='desktop-chromium'){
+   // Catch regressions where the WebGL scene is technically mounted but visually blank.
+   const snapshot=await stage.screenshot({timeout:24000});
+   const redPixels=await page.evaluate(async b64=>{
+     const image=new Image();
+     image.src='data:image/png;base64,'+b64;
+     await image.decode();
+     const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
+     const ctx=canvas.getContext('2d',{willReadFrequently:true});
+     if(!ctx)return 0;
+     ctx.drawImage(image,0,0);
+     const rgba=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+     let found=0;
+     for(let i=0;i<rgba.length;i+=4){
+       const [r,g,b]=[rgba[i],rgba[i+1],rgba[i+2]];
+       if(r>70&&r>g*1.22&&r>b*1.09)found++;
+     }
+     return found;
+   },Buffer.from(snapshot).toString('base64'));
+   expect(redPixels,'Future Lab must actually render its red 3D vehicle, not a blank viewport').toBeGreaterThan(150);
+ }
  await page.screenshot({path:'docs/qa/'+testInfo.project.name+'-future-lab.png',animations:'disabled'});
 });

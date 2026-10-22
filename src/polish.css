@@ -148,3 +148,8 @@
    margin:0!important;
  }
 }
+
+/* Prevent empty-looking 3D lab panels while Three.js compiles materials. */
+.live-sim-3d{isolation:isolate}
+.live-sim-3d .scene-warmup{position:absolute;z-index:6;inset:0;display:flex;flex-direction:column;gap:11px;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(ellipse at center,#162d3b 0%,#07131ce8 70%);color:#c8f7ec;font:11px 'DM Mono',monospace;letter-spacing:.16em}
+.live-sim-3d .scene-warmup span{font-size:9px;letter-spacing:.10em;color:#8ab5bc}
