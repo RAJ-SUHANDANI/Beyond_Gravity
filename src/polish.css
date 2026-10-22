@@ -136,3 +136,15 @@
  }
  .science-theater .science-reading{width:100%!important;min-width:0!important}
 }
+
+/* Chromium mobile QA measured right edge 400.34 CSS px in a 390px viewport.
+   Account for the inherited stage inset while preserving the entire SVG. */
+@media(max-width:570px){
+ .science-theater .science-main .science-stage{
+   position:relative!important;left:-12px!important;
+   width:calc(100vw - 68px)!important;
+   max-width:calc(100vw - 68px)!important;
+   min-width:0!important;
+   margin:0!important;
+ }
+}
