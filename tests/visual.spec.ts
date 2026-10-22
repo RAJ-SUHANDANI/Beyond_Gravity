@@ -14,7 +14,11 @@ test('director cut: screenshot and safe hit targets at desktop or mobile dimensi
  expect(controls,'player must be measurable').not.toBeNull();
  if(rect&&controls)expect(rect.y+rect.height).toBeLessThan(controls.y+3);
  if(testInfo.project.name==='mobile-chromium'){
-   await page.locator('.film-stage-content').screenshot({path:'docs/qa/'+testInfo.project.name+'-documentary.png',animations:'disabled',timeout:15000});
+   // SwiftShader may stall when trying to composite the WebGL canvas into
+   // a retina-resolution element snapshot. Hide only the canvas during this
+   // layout capture; another test captures the live 3D Future Lab separately.
+   await page.addStyleTag({content:'.scene-fixed canvas,.film-root:before{visibility:hidden!important}'});
+   await page.locator('.film-stage-content').screenshot({path:'docs/qa/'+testInfo.project.name+'-documentary.png',animations:'disabled',timeout:18000});
  }else{
    await page.screenshot({path:'docs/qa/'+testInfo.project.name+'-documentary.png',animations:'disabled',timeout:20000});
  }
