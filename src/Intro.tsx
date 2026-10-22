@@ -16,7 +16,7 @@ export function Intro({onEnter}:{onEnter:()=>void}){
  useEffect(()=>{const id=window.setTimeout(()=>setLoaded(true),400);return()=>window.clearTimeout(id)},[]);
  const move=(e:React.PointerEvent)=>{const x=e.clientX/window.innerWidth-.5,y=e.clientY/window.innerHeight-.5;position.current={x,y};if(background.current){background.current.style.setProperty('--px',String(x));background.current.style.setProperty('--py',String(y));}};
  const magnetic=(e:React.PointerEvent<HTMLButtonElement>)=>{if(!button.current)return;const r=button.current.getBoundingClientRect();button.current.style.setProperty('--mag-x',String((e.clientX-r.left-r.width/2)*.13)+'px');button.current.style.setProperty('--mag-y',String((e.clientY-r.top-r.height/2)*.13)+'px');};
- const enter=()=>{if(departing)return;setDeparting(true);window.setTimeout(onEnter,850)};
+ const enter=()=>{if(departing)return;setDeparting(true);onEnter()};
  return <div className={'cinema-intro '+(departing?'cinema-departing':'')} onPointerMove={move} ref={background}>
   <div className="intro-video" aria-hidden="true"><iframe src="https://player.vimeo.com/video/249563752?background=1&autoplay=1&muted=1&loop=1&autopause=0&controls=0&dnt=1" title="Tesla 2017 Roadster unveiling archival video" tabIndex={-1} allow="autoplay; fullscreen; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin"/></div>
   <div className="intro-dark"/><div className="intro-cinematic-bars" aria-hidden="true"/><div className="intro-beam"/><div className="intro-glass"/><div className="intro-aperture"/><div className="intro-shadow-sweep"/><div className="intro-edge-light"/>

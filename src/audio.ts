@@ -1,4 +1,5 @@
 import {chapters,parts,type PartId} from './data';
+import {fullNarration} from './story';
 
 /**
  * Documentary audio director.
@@ -31,7 +32,7 @@ export function makeCues(script:string):Cue[]{
  }
  return cues.length?cues:[{text:script,start:0,end:script.length}];
 }
-export function getNarrationCues(index:number){return makeCues(chapters[index]?.narration??'')}
+export function getNarrationCues(index:number){const c=chapters[index];return makeCues(c?fullNarration(index,c.narration):'')}
 
 function preferredVoice(role:Role){
  if(!('speechSynthesis'in window))return null;
@@ -73,6 +74,6 @@ function play(script:string,role:Role,src:string,onEnd?:()=>void,onCue?:CueHandl
  void audio.play().catch(fallback);
  return ()=>{if(mine===serial)stopNarration()};
 }
-export function narrateChapter(i:number,onEnd?:()=>void,onCue?:CueHandler){const text=chapters[i]?.narration;if(!text){onEnd?.();return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
+export function narrateChapter(i:number,onEnd?:()=>void,onCue?:CueHandler){const original=chapters[i]?.narration;const text=original?fullNarration(i,original):undefined;if(!text){onEnd?.();return}return play(text,'male',asset('male-'+String(i).padStart(2,'0')),onEnd,onCue)}
 export function narratePart(id:PartId,onEnd?:()=>void,onCue?:CueHandler){const p=parts.find(x=>x.id===id);if(!p)return;return play(p.female,'female',asset('female-'+id),onEnd,onCue)}
 export function narrateIntro(onEnd?:()=>void,onCue?:CueHandler){return play('Beyond Gravity. A documentary you can step inside. The stunt. The science. The future.','female',asset('female-intro'),onEnd,onCue)}
